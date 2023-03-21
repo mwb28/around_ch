@@ -4,6 +4,17 @@
 
 ### Umfang des Projekts
 
+- Allgemeine Beschreibung:
+
+    Das Abschlussprojekt in der Informatikausbildung, das ich gerne realisieren möchte, beschäftigt sich mit der Entwicklung einer Webplattform für das interkantonale Schulprojekt "Einmal um die Schweiz". Das Ziel des Projekts ist es, Schülerinnen und Schüler mit Hilfe von Sportlehrpersonen zu unterstützen, bei verschiedenen sportlichen Aktivitäten innerhalb einer bestimmten Zeitspanne eine Distanz von 1.850 Kilometer (Länge der Schweizer Grenze) zurückzulegen.
+    
+    Die Webplattform soll die Teilnehmenden und ihre sportlichen Aktivitäten verwalten und auswerten, damit die Fortschritte sichtbar gemacht werden können. Dafür muss eine leistungsfähige Datenbank entwickelt werden, die es ermöglicht, die Daten effizient zu speichern, zu verarbeiten und auszuwerten.
+
+    Neben der Datenbank müssen auch andere Aspekte der Softwareentwicklung berücksichtigt werden, wie z.B. die Gestaltung der Benutzeroberfläche, die Funktionalität der Webplattform, die Datensicherheit und die Zugänglichkeit. Hierbei muss sichergestellt werden, dass die Webplattform einfach und intuitiv zu bedienen ist, um eine hohe Benutzerzufriedenheit zu gewährleisten.
+    
+    Das Projekt "Einmal um die Schweiz" soll nicht nur den Teilnehmenden dazu motivieren, sich sportlich zu betätigen, sondern auch den Teamgeist fördern, indem sie interkantonal an einem gemeinsamen Ziel arbeiten. Mit diesem Projekt möchte ich zeigen, wie Informatik einen positiven Beitrag zur Förderung von Sport, Umweltbewusstsein und Gemeinschaft leisten kann.
+
+
 - Erste Beta Version nur 2 - 3 Gymnasien. Erst in der zweiten Phase alle Gymer
   - Während 2 -3 Monaten Plattform öffnen, inkl. Registrierung und Durchführung.
   - Perspektive: Ev. Für alle SuS öffnen, oder sogar für alle Personen.
