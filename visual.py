@@ -1,5 +1,6 @@
 import osmnx as ox
 
+
 # Definiere den Ort, für den der Graph erstellt werden soll
 place_name = 'Switzerland'
 
