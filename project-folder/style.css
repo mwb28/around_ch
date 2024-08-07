@@ -17,8 +17,8 @@ header {
     justify-content: space-between;
     align-items: center;
     padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #d8eae8;
+    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
 }
 
 .logo {
@@ -71,7 +71,7 @@ main {
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s;
-    margin: 0 10px;
+    margin: 10px;
 }
 
 .info-button:hover {
