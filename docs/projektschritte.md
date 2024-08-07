@@ -102,9 +102,8 @@ Rechtliche Seite abklären.
 ## 6. Technologiestack auswählen 
 
 Entscheiden, welcher Technologiestack passt zum Projekt.
-Frontend: z.B. HTML, CSS und JavaScript (mit React, Angular oder Vue.js) 
-Backend: Python (mit Django oder Flask), Ruby (mit Ruby on Rails) oder JavaScript (mit Node.js und Express)
-Ev. Rapid Prototyping mit kleinen Implemationen. 
+Frontend: z.B. HTML, CSS und JavaScript 
+Backend: JavaScript (mit Node.js und Express)
 
 ## 7.  Web-App-Strukturierung 
 

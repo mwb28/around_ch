@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>around CH</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/1.7.0/gpx.min.js"></script>
+  <style>
+    #map {
+      width: 100%;
+      height: 500px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Challange Grenze Schweiz Liechtenstein</h1>
+  <div id="map"></div>
+  <div>
+    <label for="distance">Distanz in Meter</label>
+    <input type="number" id="distance" name="distance" min="0">
+    <button id="applyDistance">Auf Karte anwenden</button>
+  </div>
+  
+  
+  <script>
+    const map = L.map('map').setView([47.1410, 9.5209], 9.5);
+
+
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(map);
+
+
+    const gpxLayer = new L.GPX('./ch_li_gpx.gpx', {
+  async: true,
+  polyline_options: {
+    color: 'red' 
+  }
+}).addTo(map);
+
+
+
+  </script>
+</body>
+</html>
+
