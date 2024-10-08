@@ -35,11 +35,58 @@
 
 
     const gpxLayer = new L.GPX('./ch_li_gpx.gpx', {
-  async: true,
-  polyline_options: {
-    color: 'red' 
+      async: true,
+      polyline_options: {
+        color: 'red'
+      },
+      marker_options: {
+        startIconUrl: null,
+        endIconUrl: null,
+        shadowUrl: null
+      }
+    }).on('loaded', function (e) {
+      const gpxPolyline = e.target.getLayers()[0];
+
+  // Helper function to calculate the new line
+  function calculateNewLine(gpxPolyline, distance) {
+    const points = gpxPolyline.getLatLngs();
+    const newPoints = [points[0]];
+    let remainingDistance = distance;
+
+    for (let i = 1; i < points.length; i++) {
+      const currentPoint = points[i - 1];
+      const nextPoint = points[i];
+      const segmentDistance = currentPoint.distanceTo(nextPoint);
+
+      if (remainingDistance <= segmentDistance) {
+        const ratio = remainingDistance / segmentDistance;
+        const newLat = currentPoint.lat + (nextPoint.lat - currentPoint.lat) * ratio;
+        const newLng = currentPoint.lng + (nextPoint.lng - currentPoint.lng) * ratio;
+        newPoints.push(new L.LatLng(newLat, newLng));
+        break;
+      } else {
+        newPoints.push(nextPoint);
+        remainingDistance -= segmentDistance;
+      }
+    }
+
+    return new L.Polyline(newPoints, { color: 'blue', weight: 5 });
   }
-}).addTo(map);
+
+  // Event listener for the button click
+  document.getElementById('applyDistance').addEventListener('click', function () {
+    const distance = parseFloat(document.getElementById('distance').value);
+    if (isNaN(distance) || distance < 0) {
+      alert('Please enter a valid distance in meters.');
+      return;
+    }
+
+    // Calculate and add the new line to the map
+    const newLine = calculateNewLine(gpxPolyline, distance);
+    newLine.addTo(map);
+  });
+    }).addTo(map);
+
 
 
 
