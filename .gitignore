@@ -3,7 +3,7 @@
 /build/
 /tools/
 /out/
-
+/node_modules/
 /.gradle/
 /.idea/
 /.settings/*
