@@ -4,16 +4,12 @@ node_modules/
 # Ignore log files
 *.log
 
-# Ignore environment variable files
-.env
-
-# Ignore build output directories
+# Ignore build directories
 dist/
 build/
 
-# Ignore temporary files
-*.tmp
-*.swp
+# Ignore environment variable files
+.env
 
 # Ignore OS-specific files
 .DS_Store
