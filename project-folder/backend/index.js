@@ -1,4 +1,5 @@
 require("dotenv").config();
+const e = require("express");
 const db = require("./db/connect");
 // express
 
@@ -9,8 +10,10 @@ app.use(express.json());
 
 // routes
 
+app.use(express.static("../frontend"));
+
 const port = process.env.PORT || 5000;
 
 app.listen(port, () => {
-  console.log(`Server läuft auf ${port}`);
+  console.log(`Server is listening on port ${port}...`);
 });
