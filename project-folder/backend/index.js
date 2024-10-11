@@ -1,6 +1,7 @@
 require("dotenv").config();
-const e = require("express");
-const db = require("./db/connect");
+const pool = require("./db/connect");
+const authRoutes = require("./routes/authRoutes");
+
 // express
 
 const express = require("express");
@@ -11,9 +12,16 @@ app.use(express.json());
 // routes
 
 app.use(express.static("../frontend"));
+app.use("/api/auth", authRoutes); // Authentication routes (register/login)
 
 const port = process.env.PORT || 5000;
-
-app.listen(port, () => {
-  console.log(`Server is listening on port ${port}...`);
+pool.connect((err) => {
+  if (err) {
+    console.error("Database connection failed:", err.stack);
+  } else {
+    console.log("Connected to the database");
+    app.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
+    });
+  }
 });
