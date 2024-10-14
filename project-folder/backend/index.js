@@ -12,7 +12,7 @@ app.use(express.json());
 // routes
 
 app.use(express.static("../frontend"));
-app.use("/api/auth", authRoutes); // Authentication routes (register/login)
+app.use("/api/v1/auth", authRoutes); // Authentication routes (register/login)
 
 const port = process.env.PORT || 5000;
 pool.connect((err) => {
