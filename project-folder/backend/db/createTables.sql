@@ -43,11 +43,11 @@ CREATE TABLE IF NOT EXISTS sportlehrperson (
 );
 
 CREATE TABLE IF NOT EXISTS sportklasse (
-    sportkl_id SERIAL, -- serial to auto increment id for class
+    sportkl_id SERIAL, 
     schul_id INT,
     name VARCHAR(40) NOT NULL,
     sportl_id INT,
-    PRIMARY KEY (sportkl_id, schul_id), -- Composite primary key
+    PRIMARY KEY (sportkl_id, schul_id), 
     FOREIGN KEY (schul_id) REFERENCES schule(schul_id) ON DELETE SET NULL ON UPDATE CASCADE,
     FOREIGN KEY (sportl_id) REFERENCES sportlehrperson(sportl_id) ON DELETE SET NULL ON UPDATE CASCADE
 );
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS schueler (
     vorname VARCHAR(40), -- optional
     jahrgang INT NOT NULL,
     geschlecht VARCHAR(1) NOT NULL
-        CHECK (geschlecht IN ('m', 'w', 'd')), -- Replacing ENUM with CHECK constraint
+        CHECK (geschlecht IN ('m', 'w', 'd')), 
     sportkl_id INT,
     schul_id INT,
     FOREIGN KEY (sportkl_id, schul_id) REFERENCES sportklasse(sportkl_id, schul_id) ON DELETE SET NULL ON UPDATE CASCADE
