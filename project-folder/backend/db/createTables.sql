@@ -1,6 +1,6 @@
 /*
 Zur Erstellung der Datenbank:
-Ich habe die Datenbank in 7 Tabellen aufgeteilt, gemäß dem relationalen Schema.
+Ich habe die Datenbank in 7 Tabellen aufgeteilt, gemäss dem relationalen Schema.
 Erklärung zu den einzelnen Befehlen:
 1. CREATE TABLE IF NOT EXISTS: Erstellt eine neue Tabelle, wenn sie noch nicht existiert.
 2. PRIMARY KEY: Definiert den Primärschlüssel der Tabelle.
@@ -40,6 +40,8 @@ CREATE TABLE IF NOT EXISTS sportlehrperson (
     vorname VARCHAR(40) NOT NULL,
     email VARCHAR(40) NOT NULL,
     password VARCHAR(255) NOT NULL
+    schul_id INT,
+    FOREIGN KEY (schul_id) REFERENCES schule(schul_id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- Tabelle "Sportklasse"

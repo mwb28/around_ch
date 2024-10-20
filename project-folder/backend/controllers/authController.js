@@ -4,41 +4,42 @@ const pool = require("../db/connect");
 const queries = require("../db/queries");
 const BadRequestError = require("../errors/bad-request");
 const crypto = require("crypto");
+// Provides register a new user, its comment-out for the first development phase.
+// // Register a new user and generate a JWT token plus check if the email already exists
+// const registerUser = async (req, res) => {
+//   const { name, vorname, email, password, school } = req.body;
 
-// Register a new user and generate a JWT token plus check if the email already exists
-const registerUser = async (req, res) => {
-  const { name, email, password, school } = req.body;
+//   try {
+//     // Check if the email already exists
+//     const emailCheck = await pool.query(queries.checkEmailExists, [email]);
+//     if (emailCheck.rows.length > 0) {
+//       return res.status(400).json({ message: "Email already exists" });
+//     }
 
-  try {
-    // Check if the email already exists
-    const emailCheck = await pool.query(queries.checkEmailExists, [email]);
-    if (emailCheck.rows.length > 0) {
-      return res.status(400).json({ message: "Email already exists" });
-    }
+//     // Hash the password
+//     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
+//     // Register the new user
+//     const newUser = await pool.query(queries.registerUser, [
+//       name,
+//       vorname,
+//       email,
+//       hashedPassword,
+//       school,
+//     ]);
 
-    // Register the new user
-    const newUser = await pool.query(queries.registerUser, [
-      name,
-      email,
-      hashedPassword,
-      school,
-    ]);
+//     // Generate a JWT token
+//     const token = jwt.sign({ id: newUser.rows[0].id }, process.env.JWT_SECRET, {
+//       expiresIn: "1h",
+//     });
 
-    // Generate a JWT token
-    const token = jwt.sign({ id: newUser.rows[0].id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
-
-    // Send the response
-    res.status(201).json({ token });
-  } catch (error) {
-    console.error("Error creating user:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-};
+//     // Send the response
+//     res.status(201).json({ token });
+//   } catch (error) {
+//     console.error("Error creating user:", error);
+//     res.status(500).json({ message: "Internal server error" });
+//   }
+// };
 
 // Login a user, handle the errors and generate a JWT token
 const loginUser = async (req, res) => {
@@ -166,7 +167,7 @@ const resetPassword = async (req, res) => {
 
 // Export the functions
 module.exports = {
-  registerUser,
+  // registerUser,
   loginUser,
   logoutUser,
   forgotPassword,
