@@ -1,8 +1,8 @@
 const registerUser =
-  "INSERT INTO sportlehrperson (name,vorname, email, password, school) VALUES ($1, $2, $3, $4) RETURNING *";
-const getUserByEmail = "SELECT * FROM users WHERE email = $1";
+  "INSERT INTO sportlehrperson (name, vorname, email, password, school) VALUES ($1, $2, $3, $4, $5) RETURNING *";
+const getUserByEmail = "SELECT * FROM sportlehrperson WHERE email = $1";
 
-module.export = {
+module.exports = {
   registerUser,
   getUserByEmail,
 };

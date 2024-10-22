@@ -46,8 +46,13 @@ const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
+    console.log("Received login request for email:", email);
+
     // Check if the email exists
-    const user = await pool.query(queries.getUserByEmail, [email]);
+    const user = await pool.query(queries.getUserByEmail, [
+      email.trim().toLowerCase(),
+    ]);
+    console.log("User query result:", user.rows);
     if (user.rows.length === 0) {
       return res.status(400).json({ message: "Email not found" });
     }

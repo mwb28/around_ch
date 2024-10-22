@@ -20,6 +20,7 @@ pool.connect((err) => {
     console.error("Database connection failed:", err.stack);
   } else {
     console.log("Connected to the database");
+
     app.listen(port, () => {
       console.log(`Server is running on port ${port}`);
     });

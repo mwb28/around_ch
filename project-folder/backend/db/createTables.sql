@@ -26,7 +26,7 @@ Erklärung zu den einzelnen Befehlen:
 -- Tabelle "Schule"
 CREATE TABLE IF NOT EXISTS schule (
     schul_id SERIAL PRIMARY KEY,
-    schulname VARCHAR(40) NOT NULL,
+    schulname VARCHAR(255) NOT NULL,
     kanton VARCHAR(2) NOT NULL
         CHECK (kanton IN ('AG', 'AI', 'AR', 'BE', 'BL', 'BS', 'FR', 'GE', 'GL', 
                           'GR', 'JU', 'LU', 'NE', 'NW', 'OW', 'SG', 'SH', 'SO', 'SZ', 'TG', 'TI', 'UR', 
@@ -36,10 +36,10 @@ CREATE TABLE IF NOT EXISTS schule (
 -- Tabelle "Sportlehrperson"
 CREATE TABLE IF NOT EXISTS sportlehrperson (
     sportl_id SERIAL PRIMARY KEY,
-    name VARCHAR(40) NOT NULL,
-    vorname VARCHAR(40) NOT NULL,
-    email VARCHAR(40) NOT NULL,
-    password VARCHAR(255) NOT NULL
+    name VARCHAR(100) NOT NULL,
+    vorname VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    password VARCHAR(255) NOT NULL,
     schul_id INT,
     FOREIGN KEY (schul_id) REFERENCES schule(schul_id) ON DELETE SET NULL ON UPDATE CASCADE
 );
@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS sportlehrperson (
 CREATE TABLE IF NOT EXISTS sportklasse (
     sportkl_id SERIAL, -- Serial zur automatischen Inkrementierung der ID für die Klasse
     schul_id INT,
-    name VARCHAR(40) NOT NULL,
+    name VARCHAR(100) NOT NULL,
     sportl_id INT,
     PRIMARY KEY (sportkl_id, schul_id), -- Zusammengesetzter Primärschlüssel
     FOREIGN KEY (schul_id) REFERENCES schule(schul_id) ON DELETE SET NULL ON UPDATE CASCADE,
@@ -58,8 +58,8 @@ CREATE TABLE IF NOT EXISTS sportklasse (
 -- Tabelle "Schüler"
 CREATE TABLE IF NOT EXISTS schueler (
     schueler_id SERIAL PRIMARY KEY,
-    nachname VARCHAR(40), -- Optional
-    vorname VARCHAR(40), -- Optional
+    nachname VARCHAR(100), -- Optional
+    vorname VARCHAR(100), -- Optional
     jahrgang INT NOT NULL,
     geschlecht VARCHAR(1) NOT NULL
         CHECK (geschlecht IN ('m', 'w', 'd')),
@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS schueler (
 -- Tabelle "Challenge"
 CREATE TABLE IF NOT EXISTS challenge (
     challenge_id SERIAL PRIMARY KEY,
-    art VARCHAR(40) NOT NULL,
+    art VARCHAR(100) NOT NULL,
     startzeitpunkt TIMESTAMP NOT NULL,
     endzeitpunkt TIMESTAMP NOT NULL
 );
