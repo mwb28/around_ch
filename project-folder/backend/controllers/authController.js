@@ -63,6 +63,14 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ message: "Incorrect password" });
     }
 
+    // Check if user needs to change initial password
+    if (user.rows[0].needs_password_change) {
+      return res.status(200).json({
+        message: "Initial password needs to be changed",
+        needsPasswordChange: true,
+      });
+    }
+
     // Generate a JWT token
     const token = jwt.sign({ id: user.rows[0].id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
@@ -72,6 +80,26 @@ const loginUser = async (req, res) => {
     res.status(200).json({ token });
   } catch (error) {
     console.error("Error logging in:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// changePassword if needed and remove the needs_password_change flag
+
+const changePassword = async (req, res) => {
+  const { email, newPassword } = req.body;
+
+  try {
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    // Update the users password and reset the needs_password_change flag
+    await pool.query(queries.updatePasswordAndRemoveFlag, [
+      hashedPassword,
+      email,
+    ]);
+    res.status(200).json({ message: "Password changed successfully" });
+  } catch (error) {
+    console.error("Error changing password:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -174,6 +202,7 @@ const resetPassword = async (req, res) => {
 module.exports = {
   // registerUser,
   loginUser,
+  changePassword,
   logoutUser,
   forgotPassword,
   resetPassword,
