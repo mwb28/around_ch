@@ -11,55 +11,45 @@ Fututre Features:
 - forgotPassword inkl. email
 - resetPassword inkl. email
 - refreshToken Handling
-
+Der Code ist nach dem Tutorial von johnsmilga.com erstellt worden.  
 */
-
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const pool = require("../db/connect");
 const queries = require("../db/queries");
-const crypto = require("crypto");
+const getRandomToken = require("../utils/generateRandomToken");
 
-// Login a user, handle the errors and generate a JWT token
+// Login eines Benutzers, Fehlerbehandlung und Generierung eines JWT-Tokens
 const loginUser = async (req, res) => {
   const { email, hashedpassword } = req.body;
 
-  // if (!email || !hashedpassword) {
-  //   throw new CustomErrorr.BadRequestError(
-  //     "Please provide an email and password"
-  //   );
-  // }
-
   try {
-    // console.log("Received login request for email:", email);
-
-    // Check if the email exists
+    // Überprüfen, ob die E-Mail existiert
     const user = await pool.query(queries.getUserByEmail, [
       email.trim().toLowerCase(),
     ]);
-    // console.log("User query result:", user.rows);
     if (user.rows.length === 0) {
-      return res.status(400).json({ message: "Email not found" });
+      return res.status(400).json({ message: "E-Mail nicht gefunden" });
     }
 
-    // Check if the password is valid
+    // Überprüfen, ob das Passwort gültig ist
     const validPassword = await bcrypt.compare(
       hashedpassword,
       user.rows[0].hashedpassword
     );
     if (!validPassword) {
-      return res.status(400).json({ message: "Incorrect password" });
+      return res.status(400).json({ message: "Falsches Passwort" });
     }
 
-    // Check if user needs to change initial password
+    // Überprüfen, ob der Benutzer das anfängliche Passwort ändern muss
     if (user.rows[0].needs_password_change) {
       return res.status(200).json({
-        message: "Initial password needs to be changed",
+        message: "Anfängliches Passwort muss geändert werden",
         needsPasswordChange: true,
       });
     }
 
-    // Generate a JWT token-- in util (not yet created)
+    // Generieren eines JWT-Tokens
     const token = jwt.sign(
       { id: user.rows[0].sportl_id },
       process.env.JWT_SECRET,
@@ -67,85 +57,93 @@ const loginUser = async (req, res) => {
         expiresIn: "1h",
       }
     );
-    // Send the response
+    // Senden der Antwort
     res.status(200).json({ token });
   } catch (error) {
-    console.error("Error logging in:", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Fehler beim Einloggen:", error);
+    res.status(500).json({ message: "Interner Serverfehler" });
   }
 };
 
-// changePassword if needed and remove the needs_password_change flag
-
+// Passwort ändern, falls erforderlich, und das needs_password_change-Flag entfernen
 const changePassword = async (req, res) => {
   const { email, newPassword } = req.body;
 
   try {
-    // Hash the new password
+    // Neues Passwort hashen
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    // Update the users password and reset the needs_password_change flag
+    // Passwort des Benutzers aktualisieren und das needs_password_change-Flag zurücksetzen
     await pool.query(queries.updatePasswordAndRemoveFlag, [
       hashedPassword,
       email,
     ]);
-    res.status(200).json({ message: "Password changed successfully" });
+    res.status(200).json({ message: "Passwort erfolgreich geändert" });
   } catch (error) {
-    console.error("Error changing password:", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Fehler beim Ändern des Passworts:", error);
+    res.status(500).json({ message: "Interner Serverfehler" });
   }
 };
 
-// Logout a user and invalidate the token
+// Benutzer ausloggen und das Token ungültig machen
 const logoutUser = async (req, res) => {
+  c;
   const token = req.header("Authorization").replace("Bearer ", "");
 
   try {
-    // Insert the token into the invalidated_tokens table
+    // Token in die Tabelle invalidated_tokens einfügen
     await pool.query(queries.insertinvalidatedToken, [token]);
 
-    res.status(200).json({ message: "Logged out successfully" });
+    res.status(200).json({ message: "Erfolgreich ausgeloggt" });
   } catch (error) {
-    console.error("Error logging out:", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Fehler beim Ausloggen:", error);
+    res.status(500).json({ message: "Interner Serverfehler" });
   }
 };
 
-// Middleware to check if the token is invalidated
+// Middleware, um zu überprüfen, ob das Token ungültig gemacht wurde
 const checkToken = async (req, res, next) => {
   const token = req.header("Authorization").replace("Bearer ", "");
 
   try {
     const result = await pool.query(queries.checkInvalidatedToken, [token]);
     if (result.rows.length > 0) {
-      return res.status(401).json({ message: "Token is invalidated" });
+      return res.status(401).json({ message: "Token ist ungültig" });
     }
     next();
   } catch (error) {
-    console.error("Error checking token:", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Fehler beim Überprüfen des Tokens:", error);
+    res.status(500).json({ message: "Interner Serverfehler" });
   }
 };
 
-// Forgot password
+// Passwort vergessen
+
 const forgotPassword = async (req, res) => {
   const { email } = req.body;
 
   try {
-    // Check if the email exists
+    // Überprüfe, ob die E-Mail existiert
     const user = await pool.query(queries.getUserByEmail, [email]);
     if (user.rows.length === 0) {
       return res.status(400).json({ message: "Email not found" });
     }
 
-    // Generate a reset token
-    const resetToken = crypto.randomBytes(32).toString("hex");
+    // Generiere ein zufälliges Token
+    const resetToken = getRandomToken(8);
+
+    // Hash das Token
     const resetTokenHash = await bcrypt.hash(resetToken, 10);
 
-    // Save the reset token hash in the database
-    await pool.query(queries.saveResetToken, [resetTokenHash, email]);
+    // Token in die Datenbank speichern
+    const expiresAt = new Date(Date.now() + 3600000); // Ablauf in 1 Stunde
+    await pool.query(queries.saveResetToken, [
+      resetTokenHash,
+      email,
+      expiresAt,
+    ]);
 
-    // Send the reset token to the user's email (pseudo-code)
-    // sendEmail(email, `Your password reset is: ${resetToken}`);
+    // Versende die E-Mail mit dem Reset-Token... Future Feature: Implementierung von E-Mail-Versand
+    //
 
     res.status(200).json({ message: "Password reset token sent to email" });
   } catch (error) {
@@ -154,32 +152,39 @@ const forgotPassword = async (req, res) => {
   }
 };
 
-// Reset password
+// Passwort zurücksetzen
 const resetPassword = async (req, res) => {
   const { email, resetToken, newPassword } = req.body;
 
   try {
-    // Check if the email exists
-    const user = await pool.query(queries.getUserByEmail, [email]);
-    if (user.rows.length === 0) {
-      return res.status(400).json({ message: "Email not found" });
+    // Finde den gespeicherten Reset-Token in der Datenbank
+    const result = await pool.query(queries.getResetTokenByEmail, [email]);
+    if (result.rows.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "Invalid or expired reset token" });
     }
 
-    // Check if the reset token is valid
-    const validToken = await bcrypt.compare(
-      resetToken,
-      user.rows[0].reset_token
-    );
+    const storedTokenHash = result.rows[0].reset_token;
+    const expiresAt = result.rows[0].expires_at;
+
+    // Überprüfen ob der Token abgelaufen ist
+    if (new Date() > expiresAt) {
+      return res.status(400).json({ message: "Reset token has expired" });
+    }
+
+    // Vergleichen des gespeicherten Tokens mit dem eingegebenen Token
+    const validToken = await bcrypt.compare(resetToken, storedTokenHash);
     if (!validToken) {
       return res
         .status(400)
         .json({ message: "Invalid or expired reset token" });
     }
 
-    // Hash the new password
+    // Hashen des neuen Passworts
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    // Update the user's password in the database
+    // Aktualisieren des Passworts in der Datenbank
     await pool.query(queries.updatePassword, [hashedPassword, email]);
 
     res.status(200).json({ message: "Password reset successfully" });
@@ -189,7 +194,7 @@ const resetPassword = async (req, res) => {
   }
 };
 
-// Export the functions
+// Funktionen exportieren
 module.exports = {
   // registerUser,
   loginUser,
