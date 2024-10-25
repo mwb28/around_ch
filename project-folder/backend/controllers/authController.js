@@ -1,10 +1,24 @@
+/*
+authController: Bearbeitet die Anfragen, die von den Routen empfangen werden.
+- Login
+- changePassword
+- logout
+- forgotPassword (email nicht implemetiert)
+- resetPassword (email nicht implemetiert)
+- checkToken
+Fututre Features:
+- registerUser
+- forgotPassword inkl. email
+- resetPassword inkl. email
+- refreshToken Handling
+
+*/
+
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const pool = require("../db/connect");
 const queries = require("../db/queries");
 const crypto = require("crypto");
-// Provides register a new user, its comment-out for the first development phase.
-// to do....
 
 // Login a user, handle the errors and generate a JWT token
 const loginUser = async (req, res) => {
@@ -53,7 +67,6 @@ const loginUser = async (req, res) => {
         expiresIn: "1h",
       }
     );
-    await console.log("Generated JWT token:", token);
     // Send the response
     res.status(200).json({ token });
   } catch (error) {
@@ -88,7 +101,7 @@ const logoutUser = async (req, res) => {
 
   try {
     // Insert the token into the invalidated_tokens table
-    await pool.query(queries.insertInvalidatedToken, [token]);
+    await pool.query(queries.insertinvalidatedToken, [token]);
 
     res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
@@ -132,7 +145,7 @@ const forgotPassword = async (req, res) => {
     await pool.query(queries.saveResetToken, [resetTokenHash, email]);
 
     // Send the reset token to the user's email (pseudo-code)
-    // sendEmail(email, `Your password reset token is: ${resetToken}`);
+    // sendEmail(email, `Your password reset is: ${resetToken}`);
 
     res.status(200).json({ message: "Password reset token sent to email" });
   } catch (error) {
