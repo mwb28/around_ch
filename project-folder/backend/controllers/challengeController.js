@@ -1,10 +1,16 @@
 /*
- getAllChallenges,
-  getSingleChallenge,
+ getAllChallengesPublic,
+  getSingleChallengePuplic,
+    getAllChallengesPrivate,
+    getSingleChallengePrivate,
   createChallenge,
+  startChallenge,
+  acvitvateChallenge,
   updateChallenge,
   deleteChallenge,
-
+  completeChallenge,
+  archiveChallenge,
+  visualizeChallenge,
 */
 const pool = require("../db/connect");
 const queries = require("../db/queries");
