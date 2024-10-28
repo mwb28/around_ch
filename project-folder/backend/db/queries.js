@@ -10,7 +10,7 @@ const getInvalidatedToken = "SELECT * FROM invalidatedtoken WHERE token = $1";
 
 //challenge queries for the database
 const getAllChallenges = "SELECT * FROM challenge";
-const getSingleChallenge = "SELECT * FROM challenge WHERE id = $1";
+const getSingleChallenge = "SELECT * FROM challenge WHERE challenge_id = $1";
 
 module.exports = {
   registerUser,

@@ -73,8 +73,17 @@ CREATE TABLE IF NOT EXISTS challenge (
     challenge_id SERIAL PRIMARY KEY,
     art VARCHAR(100) NOT NULL,
     startzeitpunkt TIMESTAMP NOT NULL,
-    endzeitpunkt TIMESTAMP NOT NULL
+    endzeitpunkt TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS challengetemplate(
+    challenge_id SERIAL PRIMARY KEY,
+    art VARCHAR(100) NOT NULL,
+    total_km DECIMAL(10, 2) NOT NULL,
+    geojson TEXT,
+    challenge_id INT,
+    FOREIGN KEY (challenge_id) REFERENCES challenge(challenge_id) ON DELETE SET NULL ON UPDATE CASCADE
+)
 
 -- Tabelle "Sportliche Leistung"
 CREATE TABLE IF NOT EXISTS sportlicheleistung (
@@ -99,3 +108,4 @@ CREATE TABLE IF NOT EXISTS nimmtteilan (
     FOREIGN KEY (sportkl_id, schul_id) REFERENCES sportklasse(sportkl_id, schul_id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (challenge_id) REFERENCES challenge(challenge_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
