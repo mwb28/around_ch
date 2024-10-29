@@ -16,8 +16,7 @@ Erklärung zu den einzelnen Befehlen:
 12. TIME: Definiert eine Spalte als Zeit.
 13. INT: Definiert eine Spalte als Ganzzahl.
 14. VARCHAR: Definiert eine Spalte als Zeichenfolge mit einer maximalen Länge.
-15. CHAR: Definiert eine Spalte als Zeichenfolge mit einer festen Länge.
-16. TEXT: Definiert eine Spalte als Text.
+
 */
 
 -- Tabelle "Schule"

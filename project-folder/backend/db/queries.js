@@ -13,6 +13,10 @@ const getAllChallenges = "SELECT * FROM challenge";
 const getSingleChallenge = "SELECT * FROM challenge WHERE challenge_id = $1";
 const getAllUserChallenges = "SELECT * FROM challenge WHERE sportl_id = $1 ";
 
+// add activity to challenge
+const addActivityToChallenge =
+  "INSERT INTO sportlicheleistung (meter, uhrzeit, datum, dauer, anzahl_m, anzahl_w, anzahl_d, challenge_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)";
+
 module.exports = {
   registerUser,
   getUserByEmail,
@@ -22,4 +26,5 @@ module.exports = {
   getAllChallenges,
   getSingleChallenge,
   getAllUserChallenges,
+  addActivityToChallenge,
 };
