@@ -1,5 +1,5 @@
 /**
- Authcontroller:
+ authcontroller:
 - loginUser: Login eines Benutzers, Fehlerbehandlung und Generierung eines JWT-Tokens
 - changePassword: Passwort ändern und needs_password_change-Flag entfernen
 - logoutUser:Benutzer ausloggen und Token ungültig machen

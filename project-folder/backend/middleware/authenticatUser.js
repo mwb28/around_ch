@@ -1,29 +1,20 @@
 const jwt = require("jsonwebtoken");
 
 const authenticateUser = (req, res, next) => {
-  let token;
-  // header ckeck :
-  const authHeader = req.headers.authorization;
-  if (authHeader && authHeader.startsWith("Bearer")) {
-    token = authHeader.split(" ")[1];
-  }
-  // token check :
-  else if (req.cookies.token) {
-    token = req.cookies.token;
-  }
-  // token not provided  :
+  const token = req.cookies.authToken;
+
   if (!token) {
-    return res.status(401).json({ message: "Unauthorized: No token provided" });
+    return res
+      .status(401)
+      .json({ message: "Nicht autorisiert: Kein Token bereitgestellt" });
   }
-  // token verification :
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
+    const user = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = user;
     next();
-    console.error("Token verification error:", error);
-    return res.status(401).json({ message: "Unauthorized: Invalid token" });
   } catch (error) {
-    return res.status(401).json({ message: "Unauthorized: Invalid token" });
+    console.error("Fehler beim Überprüfen des Tokens:", error.message);
+    res.status(403).json({ message: "Nicht autorisiert: Ungültiger Token" });
   }
 };
 module.exports = authenticateUser;
