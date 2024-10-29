@@ -3,24 +3,21 @@ Zur Erstellung der Datenbank:
 Ich habe die Datenbank in 7 Tabellen aufgeteilt, gemäss dem relationalen Schema.
 Erklärung zu den einzelnen Befehlen:
 1. CREATE TABLE IF NOT EXISTS: Erstellt eine neue Tabelle, wenn sie noch nicht existiert.
-2. PRIMARY KEY: Definiert den Primärschlüssel der Tabelle.
-3. SERIAL: Definiert, dass der Wert des Primärschlüssels automatisch inkrementiert wird.
-4. NOT NULL: Definiert, dass der Wert nicht NULL sein darf.
-5. CHECK: Definiert, dass der Wert nur aus einer bestimmten Liste von Werten stammen darf.
+2. SERIAL: Erstellt eine automatisch inkrementierte Zahl.
+3. PRIMARY KEY: Definiert die Spalte als Primärschlüssel.
+4. NOT NULL: Definiert, dass die Spalte nicht NULL sein darf.
+5. CHECK: Definiert, dass die Spalte nur bestimmte Werte annehmen darf.
 6. FOREIGN KEY: Definiert eine Fremdschlüsselbeziehung zwischen zwei Tabellen.
-7. ON DELETE CASCADE: Definiert, dass die zugehörigen Datensätze in der referenzierten Tabelle
-   gelöscht werden, wenn der Datensatz in der aktuellen Tabelle gelöscht wird.
-8. ON UPDATE CASCADE: Definiert, dass die zugehörigen Datensätze in der referenzierten Tabelle
-   aktualisiert werden, wenn der Datensatz in der aktuellen Tabelle aktualisiert wird.
-9. DECIMAL(10, 2): Definiert eine Dezimalzahl mit einer Genauigkeit von 10 Stellen und 2 Dezimalstellen.
-10. DATE: Definiert ein Datum.
-11. TIME: Definiert eine Uhrzeit.
-12. DATETIME: Definiert ein Datum und eine Uhrzeit.
-13. VARCHAR(40): Definiert eine Zeichenfolge mit einer Länge von 40 Zeichen.
-14. VARCHAR(255): Definiert eine Zeichenfolge mit einer Länge von 255 Zeichen.
-15. REFERENCES: Definiert die referenzierte Tabelle und die referenzierte Spalte für die Fremdschlüsselbeziehung.
-16. SET NULL: Definiert, dass der Wert des Fremdschlüssels auf NULL gesetzt wird, wenn der zugehörige Datensatz
-    in der referenzierten Tabelle gelöscht oder aktualisiert wird.
+7. ON DELETE CASCADE: Löscht alle Zeilen in der Tabelle, die auf den gelöschten Fremdschlüssel verweisen.
+8. ON UPDATE CASCADE: Aktualisiert alle Zeilen in der Tabelle, die auf den aktualisierten Fremdschlüssel verweisen.
+9. JSONB: Definiert eine Spalte als JSON-Datentyp.
+10. TIMESTAMP: Definiert eine Spalte als Zeitstempel.
+11. DATE: Definiert eine Spalte als Datum.
+12. TIME: Definiert eine Spalte als Zeit.
+13. INT: Definiert eine Spalte als Ganzzahl.
+14. VARCHAR: Definiert eine Spalte als Zeichenfolge mit einer maximalen Länge.
+15. CHAR: Definiert eine Spalte als Zeichenfolge mit einer festen Länge.
+16. TEXT: Definiert eine Spalte als Text.
 */
 
 -- Tabelle "Schule"
@@ -39,73 +36,60 @@ CREATE TABLE IF NOT EXISTS sportlehrperson (
     name VARCHAR(100) NOT NULL,
     vorname VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL,
-    password VARCHAR(255) NOT NULL,
+    password_gehashed VARCHAR(255) NOT NULL,
     schul_id INT,
     FOREIGN KEY (schul_id) REFERENCES schule(schul_id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- Tabelle "Sportklasse"
 CREATE TABLE IF NOT EXISTS sportklasse (
-    sportkl_id SERIAL, -- Serial zur automatischen Inkrementierung der ID für die Klasse
-    schul_id INT,
+    sportkl_id SERIAL PRIMARY KEY, 
     name VARCHAR(100) NOT NULL,
+    jahrgang INT NOT NULL,
     sportl_id INT,
-    PRIMARY KEY (sportkl_id, schul_id), -- Zusammengesetzter Primärschlüssel
-    FOREIGN KEY (schul_id) REFERENCES schule(schul_id) ON DELETE SET NULL ON UPDATE CASCADE,
-    FOREIGN KEY (sportl_id) REFERENCES sportlehrperson(sportl_id) ON DELETE SET NULL ON UPDATE CASCADE
+     schul_id INT,
+    FOREIGN KEY (sportl_id) REFERENCES sportlehrperson(sportl_id) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (schul_id) REFERENCES schule(schul_id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
--- Tabelle "Schüler"
-CREATE TABLE IF NOT EXISTS schueler (
-    schueler_id SERIAL PRIMARY KEY,
-    nachname VARCHAR(100), -- Optional
-    vorname VARCHAR(100), -- Optional
-    jahrgang INT NOT NULL,
-    geschlecht VARCHAR(1) NOT NULL
-        CHECK (geschlecht IN ('m', 'w', 'd')),
-    sportkl_id INT,
-    schul_id INT,
-    FOREIGN KEY (sportkl_id, schul_id) REFERENCES sportklasse(sportkl_id, schul_id) ON DELETE SET NULL ON UPDATE CASCADE
+-- Tabelle "Challenge Vorlage"
+CREATE TABLE IF NOT EXISTS challenge_vorlage(
+    challengevl_id SERIAL PRIMARY KEY,
+    art_der_challenge VARCHAR(100) NOT NULL,
+    total_meter INT NOT NULL,
+    geojson_daten JSNOB,
 );
 
 -- Tabelle "Challenge"
 CREATE TABLE IF NOT EXISTS challenge (
     challenge_id SERIAL PRIMARY KEY,
-    art VARCHAR(100) NOT NULL,
     startzeitpunkt TIMESTAMP NOT NULL,
     endzeitpunkt TIMESTAMP
+    challengevl_id INT,
+    FOREIGN KEY (challengevl_id) REFERENCES challenge_vorlage(challengevl_id) ON DELETE SET NULL ON UPDATE CASCADE
 );
-
-CREATE TABLE IF NOT EXISTS challengetemplate(
-    challenge_id SERIAL PRIMARY KEY,
-    art VARCHAR(100) NOT NULL,
-    total_km DECIMAL(10, 2) NOT NULL,
-    geojson TEXT,
-    challenge_id INT,
-    FOREIGN KEY (challenge_id) REFERENCES challenge(challenge_id) ON DELETE SET NULL ON UPDATE CASCADE
-)
 
 -- Tabelle "Sportliche Leistung"
 CREATE TABLE IF NOT EXISTS sportlicheleistung (
     zaehler_id SERIAL PRIMARY KEY,
-    km DECIMAL(10, 2) NOT NULL,
-    sportart VARCHAR(40) NOT NULL,
-    datum DATE NOT NULL,
-    uhrzeit TIME NOT NULL,
+    meter INT NOT NULL,
+    uhrzeit DATE NOT NULL,
+    datum TIME NOT NULL,
     dauer TIME NOT NULL,
+    anzahl_m INT,
+    anzahl_w INT,
+    anzahl_d INT,
     challenge_id INT,
-    schueler_id INT,
-    FOREIGN KEY (challenge_id) REFERENCES challenge(challenge_id) ON DELETE SET NULL ON UPDATE CASCADE,
-    FOREIGN KEY (schueler_id) REFERENCES schueler(schueler_id) ON DELETE SET NULL ON UPDATE CASCADE
+    FOREIGN KEY (challenge_id) REFERENCES challenge(challenge_id) ON DELETE SET NULL ON UPDATE CASCADE
+  
 );
 
 -- Tabelle "Teilnahme"
 CREATE TABLE IF NOT EXISTS nimmtteilan (
     sportkl_id INT,
-    schul_id INT,
     challenge_id INT,
-    PRIMARY KEY (sportkl_id, schul_id, challenge_id),
-    FOREIGN KEY (sportkl_id, schul_id) REFERENCES sportklasse(sportkl_id, schul_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY (sportkl_id, challenge_id),
+    FOREIGN KEY (sportkl_id) REFERENCES sportklasse(sportkl_id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (challenge_id) REFERENCES challenge(challenge_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 

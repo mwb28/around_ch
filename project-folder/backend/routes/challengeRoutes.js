@@ -2,16 +2,19 @@ const express = require("express");
 const router = express.Router();
 
 const {
-  getAllChallengesPublic,
-  getSingleChallengePublic,
+  getAllChallenges,
+  getSingleChallenge,
   // createChallenge,
   // updateChallenge,
   // deleteChallenge,
 } = require("../controllers/challengeController");
 const { getSingleChallenge } = require("../db/queries");
+// Öffentliche Routen
+router.get("/challenges/public", getAllChallenges);
+router.get("/challenges/public/single/:id", getSingleChallenge);
 
-router.get("/getAllChallenges", getAllChallengesPublic);
-router.get("/getSingleChallenge/:id", getSingleChallengePublic);
+// Private Routen
+// to do...
 // router.post("/createChallenge", createChallenge);
 // router.patch("/updateChallenge/:id", updateChallenge);
 // router.delete("/deleteChallenge/:id", deleteChallenge);

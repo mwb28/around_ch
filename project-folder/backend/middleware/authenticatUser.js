@@ -9,8 +9,8 @@ const authenticateUser = (req, res, next) => {
       .json({ message: "Nicht autorisiert: Kein Token bereitgestellt" });
   }
   try {
-    const user = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = user;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = { sportl_id: decoded.id };
     next();
   } catch (error) {
     console.error("Fehler beim Überprüfen des Tokens:", error.message);

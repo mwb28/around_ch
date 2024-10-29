@@ -11,6 +11,7 @@ const getInvalidatedToken = "SELECT * FROM invalidatedtoken WHERE token = $1";
 //challenge queries for the database
 const getAllChallenges = "SELECT * FROM challenge";
 const getSingleChallenge = "SELECT * FROM challenge WHERE challenge_id = $1";
+const getAllUserChallenges = "SELECT * FROM challenge WHERE sportl_id = $1 ";
 
 module.exports = {
   registerUser,
@@ -20,4 +21,5 @@ module.exports = {
   getInvalidatedToken,
   getAllChallenges,
   getSingleChallenge,
+  getAllUserChallenges,
 };
