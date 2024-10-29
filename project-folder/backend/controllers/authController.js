@@ -1,18 +1,3 @@
-/*
-authController: Bearbeitet die Anfragen, die von den Routen empfangen werden.
-- Login
-- changePassword
-- logout
-- forgotPassword (email nicht implemetiert)
-- resetPassword (email nicht implemetiert)
-- checkToken
-Fututre Features:
-- registerUser
-- forgotPassword inkl. email
-- resetPassword inkl. email
-- refreshToken Handling
-Der Code ist nach dem Tutorial von johnsmilga.com erstellt worden.  
-*/
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const pool = require("../db/connect");
@@ -24,131 +9,131 @@ const loginUser = async (req, res) => {
   const { email, hashedpassword } = req.body;
 
   try {
-    // Überprüfen, ob die E-Mail existiert
-    const user = await pool.query(queries.getUserByEmail, [
-      email.trim().toLowerCase(),
-    ]);
+    const trimmedEmail = email.trim().toLowerCase(); // Email trimmen und in Kleinbuchstaben umwandeln
+
+    // Überprüfen, ob die E-Mail in der Datenbank existiert
+    const user = await pool.query(queries.getUserByEmail, [trimmedEmail]);
     if (user.rows.length === 0) {
       return res.status(400).json({ message: "E-Mail nicht gefunden" });
     }
 
-    // Überprüfen, ob das Passwort gültig ist
+    const userData = user.rows[0];
+    // Passwortüberprüfung mit bcrypt
     const validPassword = await bcrypt.compare(
       hashedpassword,
-      user.rows[0].hashedpassword
+      userData.hashedpassword
     );
     if (!validPassword) {
       return res.status(400).json({ message: "Falsches Passwort" });
     }
 
-    // Überprüfen, ob der Benutzer das anfängliche Passwort ändern muss
-    if (user.rows[0].needs_password_change) {
+    // Falls der Benutzer das initiale Passwort ändern muss
+    if (userData.needs_password_change) {
       return res.status(200).json({
         message: "Anfängliches Passwort muss geändert werden",
         needsPasswordChange: true,
       });
     }
 
-    // Generieren eines JWT-Tokens
-    const token = jwt.sign(
-      { id: user.rows[0].sportl_id },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "1h",
-      }
-    );
-    // Senden der Antwort
-    res.status(200).json({ token });
+    // JWT-Token generieren, um den Benutzer zu authentifizieren
+    const token = jwt.sign({ id: userData.sportl_id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    // JWT als HTTP-Only-Cookie setzen, um es vor JavaScript-Zugriff zu schützen
+    res.cookie("authToken", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", 
+      maxAge: 3600000,
+    });
+
+    res.status(200).json({ message: "Login erfolgreich" });
   } catch (error) {
-    console.error("Fehler beim Einloggen:", error);
+    console.error("Fehler beim Einloggen:", error.message); /
     res.status(500).json({ message: "Interner Serverfehler" });
   }
 };
 
-// Passwort ändern, falls erforderlich, und das needs_password_change-Flag entfernen
+// Passwort ändern und needs_password_change-Flag entfernen
 const changePassword = async (req, res) => {
   const { email, newPassword } = req.body;
 
   try {
-    // Neues Passwort hashen
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-    // Passwort des Benutzers aktualisieren und das needs_password_change-Flag zurücksetzen
+    const hashedPassword = await bcrypt.hash(newPassword, 10); 
     await pool.query(queries.updatePasswordAndRemoveFlag, [
       hashedPassword,
       email,
-    ]);
+    ]); 
     res.status(200).json({ message: "Passwort erfolgreich geändert" });
   } catch (error) {
-    console.error("Fehler beim Ändern des Passworts:", error);
+    console.error("Fehler beim Ändern des Passworts:", error.message);
     res.status(500).json({ message: "Interner Serverfehler" });
   }
 };
 
-// Benutzer ausloggen und das Token ungültig machen
+// Benutzer ausloggen und Token ungültig machen
 const logoutUser = async (req, res) => {
-  c;
-  const token = req.header("Authorization").replace("Bearer ", "");
+  const token = req.cookies.authToken;
 
   try {
-    // Token in die Tabelle invalidated_tokens einfügen
-    await pool.query(queries.insertinvalidatedToken, [token]);
-
+    await pool.query(queries.insertinvalidatedToken, [token]); 
+    res.clearCookie("authToken"); 
     res.status(200).json({ message: "Erfolgreich ausgeloggt" });
   } catch (error) {
-    console.error("Fehler beim Ausloggen:", error);
+    console.error("Fehler beim Ausloggen:", error.message);
     res.status(500).json({ message: "Interner Serverfehler" });
   }
 };
 
-// Middleware, um zu überprüfen, ob das Token ungültig gemacht wurde
+// Middleware zur Überprüfung, ob das Token ungültig gemacht wurde
 const checkToken = async (req, res, next) => {
-  const token = req.header("Authorization").replace("Bearer ", "");
+  const token = req.cookies.authToken;
+
+  if (!token) {
+    return res.status(401).json({ message: "Kein Token bereitgestellt" }); 
+  }
 
   try {
     const result = await pool.query(queries.checkInvalidatedToken, [token]);
     if (result.rows.length > 0) {
-      return res.status(401).json({ message: "Token ist ungültig" });
+      return res.status(401).json({ message: "Token ist ungültig" }); 
     }
-    next();
+    next(); 
   } catch (error) {
-    console.error("Fehler beim Überprüfen des Tokens:", error);
+    console.error("Fehler beim Überprüfen des Tokens:", error.message);
     res.status(500).json({ message: "Interner Serverfehler" });
   }
 };
 
 // Passwort vergessen
-
 const forgotPassword = async (req, res) => {
   const { email } = req.body;
 
   try {
-    // Überprüfe, ob die E-Mail existiert
-    const user = await pool.query(queries.getUserByEmail, [email]);
+    const trimmedEmail = email.trim().toLowerCase();
+
+    const user = await pool.query(queries.getUserByEmail, [trimmedEmail]);
     if (user.rows.length === 0) {
-      return res.status(400).json({ message: "Email not found" });
+      return res.status(400).json({ message: "E-Mail nicht gefunden" });
     }
 
-    // Generiere ein zufälliges Token
-    const resetToken = getRandomToken(8);
+    const resetToken = getRandomToken(8); 
+    const resetTokenHash = await bcrypt.hash(resetToken, 10); s
 
-    // Hash das Token
-    const resetTokenHash = await bcrypt.hash(resetToken, 10);
-
-    // Token in die Datenbank speichern
-    const expiresAt = new Date(Date.now() + 3600000); // Ablauf in 1 Stunde
+    const expiresAt = new Date(Date.now() + 3600000); // Token-Ablaufzeit in 1 Stunde
     await pool.query(queries.saveResetToken, [
       resetTokenHash,
-      email,
+      trimmedEmail,
       expiresAt,
     ]);
 
-    // Versende die E-Mail mit dem Reset-Token... Future Feature: Implementierung von E-Mail-Versand
-    //
-
-    res.status(200).json({ message: "Password reset token sent to email" });
+    // Hinweis: E-Mail senden ist ein zukünftiges Feature
+    res
+      .status(200)
+      .json({ message: "Passwort-Zurücksetzungs-Token wurde gesendet" });
   } catch (error) {
-    console.error("Error in forgot password:", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Fehler bei Passwort vergessen:", error.message);
+    res.status(500).json({ message: "Interner Serverfehler" });
   }
 };
 
@@ -157,46 +142,48 @@ const resetPassword = async (req, res) => {
   const { email, resetToken, newPassword } = req.body;
 
   try {
-    // Finde den gespeicherten Reset-Token in der Datenbank
-    const result = await pool.query(queries.getResetTokenByEmail, [email]);
+    const trimmedEmail = email.trim().toLowerCase();
+
+    // Überprüfen, ob ein Reset-Token für die E-Mail existiert und gültig ist
+    const result = await pool.query(queries.getResetTokenByEmail, [
+      trimmedEmail,
+    ]);
     if (result.rows.length === 0) {
       return res
         .status(400)
-        .json({ message: "Invalid or expired reset token" });
+        .json({ message: "Ungültiger oder abgelaufener Zurücksetzungstoken" });
     }
 
-    const storedTokenHash = result.rows[0].reset_token;
-    const expiresAt = result.rows[0].expires_at;
+    const { reset_token: storedTokenHash, expires_at: expiresAt } =
+      result.rows[0];
 
-    // Überprüfen ob der Token abgelaufen ist
+    // Überprüfen, ob der Token abgelaufen ist
     if (new Date() > expiresAt) {
-      return res.status(400).json({ message: "Reset token has expired" });
+      return res
+        .status(400)
+        .json({ message: "Zurücksetzungstoken ist abgelaufen" });
     }
 
-    // Vergleichen des gespeicherten Tokens mit dem eingegebenen Token
+    // Token-Vergleich zwischen eingegebenem und gespeichertem Hash
     const validToken = await bcrypt.compare(resetToken, storedTokenHash);
     if (!validToken) {
       return res
         .status(400)
-        .json({ message: "Invalid or expired reset token" });
+        .json({ message: "Ungültiger oder abgelaufener Zurücksetzungstoken" });
     }
 
-    // Hashen des neuen Passworts
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const hashedPassword = await bcrypt.hash(newPassword, 10); 
+    await pool.query(queries.updatePassword, [hashedPassword, trimmedEmail]); /
 
-    // Aktualisieren des Passworts in der Datenbank
-    await pool.query(queries.updatePassword, [hashedPassword, email]);
-
-    res.status(200).json({ message: "Password reset successfully" });
+    res.status(200).json({ message: "Passwort erfolgreich zurückgesetzt" });
   } catch (error) {
-    console.error("Error in reset password:", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Fehler bei Passwort zurücksetzen:", error.message);
+    res.status(500).json({ message: "Interner Serverfehler" });
   }
 };
 
-// Funktionen exportieren
+
 module.exports = {
-  // registerUser,
   loginUser,
   changePassword,
   logoutUser,
