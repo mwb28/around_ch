@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const authenticateUser = require("../middleware/authenticatUser");
 
 const {
   getAllChallenges,
@@ -8,8 +9,7 @@ const {
   // updateChallenge,
   // deleteChallenge,
 } = require("../controllers/challengeController");
-const { getSingleChallenge } = require("../db/queries");
-const authenticateUser = require("../middleware/authenticatUser");
+
 // Öffentliche Routen
 router.get("/challenges/public", getAllChallenges);
 router.get("/challenges/public/single/:id", getSingleChallenge);

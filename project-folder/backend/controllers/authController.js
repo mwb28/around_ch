@@ -9,7 +9,6 @@
 
  */
 
-
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const pool = require("../db/connect");
@@ -55,13 +54,13 @@ const loginUser = async (req, res) => {
     // JWT als HTTP-Only-Cookie setzen, um es vor JavaScript-Zugriff zu schützen
     res.cookie("authToken", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", 
+      secure: process.env.NODE_ENV === "production",
       maxAge: 3600000,
     });
 
     res.status(200).json({ message: "Login erfolgreich" });
   } catch (error) {
-    console.error("Fehler beim Einloggen:", error.message); /
+    console.error("Fehler beim Einloggen:", error.message);
     res.status(500).json({ message: "Interner Serverfehler" });
   }
 };
@@ -71,11 +70,11 @@ const changePassword = async (req, res) => {
   const { email, newPassword } = req.body;
 
   try {
-    const hashedPassword = await bcrypt.hash(newPassword, 10); 
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
     await pool.query(queries.updatePasswordAndRemoveFlag, [
       hashedPassword,
       email,
-    ]); 
+    ]);
     res.status(200).json({ message: "Passwort erfolgreich geändert" });
   } catch (error) {
     console.error("Fehler beim Ändern des Passworts:", error.message);
@@ -88,8 +87,8 @@ const logoutUser = async (req, res) => {
   const token = req.cookies.authToken;
 
   try {
-    await pool.query(queries.insertinvalidatedToken, [token]); 
-    res.clearCookie("authToken"); 
+    await pool.query(queries.insertinvalidatedToken, [token]);
+    res.clearCookie("authToken");
     res.status(200).json({ message: "Erfolgreich ausgeloggt" });
   } catch (error) {
     console.error("Fehler beim Ausloggen:", error.message);
@@ -102,15 +101,15 @@ const checkToken = async (req, res, next) => {
   const token = req.cookies.authToken;
 
   if (!token) {
-    return res.status(401).json({ message: "Kein Token bereitgestellt" }); 
+    return res.status(401).json({ message: "Kein Token bereitgestellt" });
   }
 
   try {
     const result = await pool.query(queries.checkInvalidatedToken, [token]);
     if (result.rows.length > 0) {
-      return res.status(401).json({ message: "Token ist ungültig" }); 
+      return res.status(401).json({ message: "Token ist ungültig" });
     }
-    next(); 
+    next();
   } catch (error) {
     console.error("Fehler beim Überprüfen des Tokens:", error.message);
     res.status(500).json({ message: "Interner Serverfehler" });
@@ -129,8 +128,9 @@ const forgotPassword = async (req, res) => {
       return res.status(400).json({ message: "E-Mail nicht gefunden" });
     }
 
-    const resetToken = getRandomToken(8); 
-    const resetTokenHash = await bcrypt.hash(resetToken, 10); s
+    const resetToken = getRandomToken(8);
+    const resetTokenHash = await bcrypt.hash(resetToken, 10);
+    s;
 
     const expiresAt = new Date(Date.now() + 3600000); // Token-Ablaufzeit in 1 Stunde
     await pool.query(queries.saveResetToken, [
@@ -184,8 +184,8 @@ const resetPassword = async (req, res) => {
         .json({ message: "Ungültiger oder abgelaufener Zurücksetzungstoken" });
     }
 
-    const hashedPassword = await bcrypt.hash(newPassword, 10); 
-    await pool.query(queries.updatePassword, [hashedPassword, trimmedEmail]); /
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await pool.query(queries.updatePassword, [hashedPassword, trimmedEmail]);
 
     res.status(200).json({ message: "Passwort erfolgreich zurückgesetzt" });
   } catch (error) {
@@ -193,7 +193,6 @@ const resetPassword = async (req, res) => {
     res.status(500).json({ message: "Interner Serverfehler" });
   }
 };
-
 
 module.exports = {
   loginUser,
