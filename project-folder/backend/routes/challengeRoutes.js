@@ -11,8 +11,8 @@ const {
 } = require("../controllers/challengeController");
 
 // Öffentliche Routen
-router.get("/challenges/public", getAllChallenges);
-router.get("/challenges/public/single/:id", getSingleChallenge);
+router.get("/public", getAllChallenges);
+router.get("/public/single/:id", getSingleChallenge);
 
 // Private Routen
 // to do...

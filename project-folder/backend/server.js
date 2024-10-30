@@ -14,7 +14,7 @@ app.use(express.json());
 
 app.use(express.static("../frontend"));
 app.use("/api/v1/auth", authRoutes); // Authentication routes (register/login)
-app.use("/api/v1/challenge", challengeRoutes); // Challenge routes
+app.use("/api/v1/challenges", challengeRoutes); // Challenge routes
 
 const port = process.env.PORT || 5000;
 pool.connect((err) => {
