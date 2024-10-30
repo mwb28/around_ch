@@ -41,9 +41,36 @@ const getSingleChallenge = async (req, res) => {
     res.status(500).json({ message: "Interner Serverfehler" });
   }
 };
-//const createChallenge = async (req, res) => {
+
+const createChallenge = async (req, res) => {
+  const { challengevl_id, startzeitpunkt, sportkl_id, gegner_sporkl_id } =
+    req.body;
+  const { sportl_id } = req.user;
+
+  try {
+    const newChallenge = await pool.query(queries.createChallenge, [
+      challengevl_id,
+      sportl_id,
+      startzeitpunkt,
+    ]);
+
+    const challenge_id = newChallenge.rows[0].challenge_id;
+
+    await pool.query(queries.addChallengeEnemy, [
+      sportkl_id,
+      challenge_id,
+      gegner_sporkl_id || null,
+    ]);
+
+    res.status(201).json(newChallenge.rows[0]);
+  } catch (error) {
+    console.error("Fehler beim Erstellen der Herausforderung:", error);
+    res.status(500).json({ message: "Interner Serverfehler" });
+  }
+};
 
 module.exports = {
   getAllChallenges,
   getSingleChallenge,
+  createChallenge,
 };

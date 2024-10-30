@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS sportlehrperson (
     email VARCHAR(100) NOT NULL,
     password_gehashed VARCHAR(255) NOT NULL,
     schul_id INT,
+    needs_password_change BOOLEAN DEFAULT false,
     FOREIGN KEY (schul_id) REFERENCES schule(schul_id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
@@ -65,7 +66,9 @@ CREATE TABLE IF NOT EXISTS challenge (
     startzeitpunkt TIMESTAMP NOT NULL,
     endzeitpunkt TIMESTAMP
     challengevl_id INT,
+    sportl_id INT,
     FOREIGN KEY (challengevl_id) REFERENCES challenge_vorlage(challengevl_id) ON DELETE SET NULL ON UPDATE CASCADE
+    FOREIGN KEY (sportl_id) REFERENCES sportlehrperson(sportl_id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- Tabelle "Sportliche Leistung"
@@ -87,8 +90,17 @@ CREATE TABLE IF NOT EXISTS sportlicheleistung (
 CREATE TABLE IF NOT EXISTS nimmtteilan (
     sportkl_id INT,
     challenge_id INT,
+    gegner_sportkl_id INT,
     PRIMARY KEY (sportkl_id, challenge_id),
     FOREIGN KEY (sportkl_id) REFERENCES sportklasse(sportkl_id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (challenge_id) REFERENCES challenge(challenge_id) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (gegner_sportkl_id) REFERENCES sportklasse(sportkl_id) ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT check_sportkl_id CHECK (sportkl_id != gegner_sportkl_id)
+);
+
+CREATE TABLE invalidated_tokens (
+    id SERIAL PRIMARY KEY,
+    token VARCHAR(255) NOT NULL,
+    invalidated_at TIMESTAMP DEFAULT NOW()
 );
 
