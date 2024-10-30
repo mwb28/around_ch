@@ -57,17 +57,17 @@ CREATE TABLE IF NOT EXISTS challenge_vorlage(
     challengevl_id SERIAL PRIMARY KEY,
     art_der_challenge VARCHAR(100) NOT NULL,
     total_meter INT NOT NULL,
-    geojson_daten JSNOB,
+    geojson_daten JSONB
 );
 
 -- Tabelle "Challenge"
 CREATE TABLE IF NOT EXISTS challenge (
     challenge_id SERIAL PRIMARY KEY,
     startzeitpunkt TIMESTAMP NOT NULL,
-    endzeitpunkt TIMESTAMP
+    endzeitpunkt TIMESTAMP,
     challengevl_id INT,
     sportl_id INT,
-    FOREIGN KEY (challengevl_id) REFERENCES challenge_vorlage(challengevl_id) ON DELETE SET NULL ON UPDATE CASCADE
+    FOREIGN KEY (challengevl_id) REFERENCES challenge_vorlage(challengevl_id) ON DELETE SET NULL ON UPDATE CASCADE,
     FOREIGN KEY (sportl_id) REFERENCES sportlehrperson(sportl_id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
@@ -75,8 +75,8 @@ CREATE TABLE IF NOT EXISTS challenge (
 CREATE TABLE IF NOT EXISTS sportlicheleistung (
     zaehler_id SERIAL PRIMARY KEY,
     meter INT NOT NULL,
-    uhrzeit DATE NOT NULL,
-    datum TIME NOT NULL,
+    uhrzeit TIME NOT NULL,
+    datum DATE NOT NULL,
     dauer TIME NOT NULL,
     anzahl_m INT,
     anzahl_w INT,
@@ -92,12 +92,12 @@ CREATE TABLE IF NOT EXISTS nimmtteilan (
     challenge_id INT,
     gegner_sportkl_id INT,
     PRIMARY KEY (sportkl_id, challenge_id),
+    CONSTRAINT check_sportkl_id CHECK (sportkl_id != gegner_sportkl_id),
     FOREIGN KEY (sportkl_id) REFERENCES sportklasse(sportkl_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (challenge_id) REFERENCES challenge(challenge_id) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (challenge_id) REFERENCES challenge(challenge_id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (gegner_sportkl_id) REFERENCES sportklasse(sportkl_id) ON DELETE CASCADE ON UPDATE CASCADE
-    CONSTRAINT check_sportkl_id CHECK (sportkl_id != gegner_sportkl_id)
 );
-
+-- Tabelle "Invalide Tokens"
 CREATE TABLE invalidated_tokens (
     id SERIAL PRIMARY KEY,
     token VARCHAR(255) NOT NULL,
