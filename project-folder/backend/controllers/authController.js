@@ -17,7 +17,7 @@ const getRandomToken = require("../utils/generateRandomToken");
 
 // Login eines Benutzers, Fehlerbehandlung und Generierung eines JWT-Tokens
 const loginUser = async (req, res) => {
-  const { email, hashedpassword } = req.body;
+  const { email, password } = req.body;
 
   try {
     const trimmedEmail = email.trim().toLowerCase(); // Email trimmen und in Kleinbuchstaben umwandeln
@@ -31,8 +31,8 @@ const loginUser = async (req, res) => {
     const userData = user.rows[0];
     // Passwortüberprüfung mit bcrypt
     const validPassword = await bcrypt.compare(
-      hashedpassword,
-      userData.hashedpassword
+      password,
+      userData.password_gehashed
     );
     if (!validPassword) {
       return res.status(400).json({ message: "Falsches Passwort" });
@@ -50,6 +50,7 @@ const loginUser = async (req, res) => {
     const token = jwt.sign({ id: userData.sportl_id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
+    console.log("Generated authToken:", token);
 
     // JWT als HTTP-Only-Cookie setzen, um es vor JavaScript-Zugriff zu schützen
     res.cookie("authToken", token, {
@@ -67,13 +68,41 @@ const loginUser = async (req, res) => {
 
 // Passwort ändern und needs_password_change-Flag entfernen
 const changePassword = async (req, res) => {
-  const { email, newPassword } = req.body;
+  const { email, oldPassword, newPassword, confirmPassword } = req.body;
 
   try {
+    const trimmedEmail = email.trim().toLowerCase();
+    const user = await pool.query(queries.getUserByEmail, [trimmedEmail]);
+    if (user.rows.length === 0) {
+      return res.status(400).json({ message: "E-Mail nicht gefunden" });
+    }
+    const userData = user.rows[0];
+    const validPassword = await bcrypt.compare(
+      oldPassword,
+      userData.password_gehashed
+    );
+    if (!validPassword) {
+      return res.status(400).json({ message: "Falsches Passwort" });
+    }
+    if (newPassword !== confirmPassword) {
+      return res
+        .status(400)
+        .json({ message: "Passwörter stimmen nicht überein" });
+    }
+    const isSamePassword = await bcrypt.compare(
+      newPassword,
+      userData.password_gehashed
+    );
+    if (isSamePassword) {
+      return res
+        .status(400)
+        .json({ message: "Neues Passwort muss sich vom alten unterscheiden" });
+    }
+
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     await pool.query(queries.updatePasswordAndRemoveFlag, [
       hashedPassword,
-      email,
+      trimmedEmail,
     ]);
     res.status(200).json({ message: "Passwort erfolgreich geändert" });
   } catch (error) {

@@ -22,4 +22,3 @@ INSERT INTO schule (schulname, kanton) VALUES
 ('Fachmittelschule Thun', 'BE'),
 ('Ecole de culture générale de Bienne et du Jura bernois', 'BE'),
 ('Fachmittelschule NMS Bern', 'BE');
-

@@ -64,6 +64,7 @@ CREATE TABLE IF NOT EXISTS challenge_vorlage(
 CREATE TABLE IF NOT EXISTS challenge (
     challenge_id SERIAL PRIMARY KEY,
     startzeitpunkt TIMESTAMP NOT NULL,
+    meters_completed INT DEFAULT 0,
     endzeitpunkt TIMESTAMP,
     challengevl_id INT,
     sportl_id INT,
@@ -75,7 +76,7 @@ CREATE TABLE IF NOT EXISTS challenge (
 CREATE TABLE IF NOT EXISTS sportlicheleistung (
     zaehler_id SERIAL PRIMARY KEY,
     meter INT NOT NULL,
-    uhrzeit TIME NOT NULL,
+    uhrzeit TIME DEFAULT NOW(),
     datum DATE NOT NULL,
     dauer TIME NOT NULL,
     anzahl_m INT,

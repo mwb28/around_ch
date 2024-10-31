@@ -13,7 +13,7 @@
 */
 const pool = require("../db/connect");
 const queries = require("../db/queries");
-
+// Zeige alle Herausforderungen an
 const getAllChallenges = async (req, res) => {
   const sportlId = req.user ? req.user.sportl_id : null;
   try {
@@ -29,7 +29,7 @@ const getAllChallenges = async (req, res) => {
     res.status(500).json({ message: "Interner Serverfehler" });
   }
 };
-
+// Zeige eine einzelne Herausforderung an
 const getSingleChallenge = async (req, res) => {
   const { id } = req.params;
 
@@ -41,7 +41,7 @@ const getSingleChallenge = async (req, res) => {
     res.status(500).json({ message: "Interner Serverfehler" });
   }
 };
-
+// Erstelle eine neue Herausforderung
 const createChallenge = async (req, res) => {
   const { challengevl_id, startzeitpunkt, sportkl_id, gegner_sporkl_id } =
     req.body;
@@ -68,9 +68,58 @@ const createChallenge = async (req, res) => {
     res.status(500).json({ message: "Interner Serverfehler" });
   }
 };
+// Füge eine Aktivität zu einer Herausforderung hinzu
+const addActivityToChallenge = async (req, res) => {
+  const {
+    meter,
+    uhrzeit,
+    datum,
+    dauer,
+    anzahl_m,
+    anzahl_w,
+    anzahl_d,
+    challenge_id,
+  } = req.body;
+
+  try {
+    await pool.query(queries.addActivity, [
+      meter,
+      uhrzeit,
+      datum,
+      dauer,
+      anzahl_m,
+      anzahl_w,
+      anzahl_d,
+      challenge_id,
+    ]);
+    await pool.query(queries.updateChallenge, [meter, challenge_id]);
+    res
+      .status(201)
+      .json({ message: "Aktivität hinzugefügt und Challenge aktualisiert" });
+  } catch (error) {
+    console.error(
+      "Fehler beim Hinzufügen der Aktivität oder Challenge:",
+      error.message
+    );
+    res.status(500).json({ message: "Interner Serverfehler" });
+  }
+};
+// Lösche eine Herausforderung
+const deleteChallenge = async (req, res) => {
+  const { id } = req.params;
+  try {
+    await pool.query(queries.deleteChallenge, [id]);
+    res.status(200).json({ message: "Herausforderung gelöscht" });
+  } catch (error) {
+    console.error("Fehler beim Löschen der Herausforderung:", error);
+    res.status(500).json({ message: "Interner Serverfehler" });
+  }
+};
 
 module.exports = {
   getAllChallenges,
   getSingleChallenge,
   createChallenge,
+  deleteChallenge,
+  addActivityToChallenge,
 };
