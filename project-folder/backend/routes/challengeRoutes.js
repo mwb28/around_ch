@@ -11,15 +11,19 @@ const {
 
 // Öffentliche Routen
 router.get("/public", getAllChallenges);
-router.get("/public/single/:id", getSingleChallenge);
+router.get("/public/single/:challenge_id", getSingleChallenge);
 
 // Private Routen
 // to do...
 // Challenge erstellen
 router.post("/create", authenticateUser, createChallenge);
 //delete route
-router.delete("/delete/:id", authenticateUser, deleteChallenge);
+router.delete("/:challenge_id/delete", authenticateUser, deleteChallenge);
 // update route
-router.post("/:id/addActivity", authenticateUser, addActivityToChallenge);
+router.post(
+  "/:challenge_id/addActivity",
+  authenticateUser,
+  addActivityToChallenge
+);
 
 module.exports = router;

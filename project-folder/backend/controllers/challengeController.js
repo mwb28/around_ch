@@ -31,10 +31,10 @@ const getAllChallenges = async (req, res) => {
 };
 // Zeige eine einzelne Herausforderung an
 const getSingleChallenge = async (req, res) => {
-  const { id } = req.params;
+  const { challenge_id } = req.params;
 
   try {
-    const challenge = await pool.query(queries.getSingleChallenge, [id]);
+    const challenge = await pool.query(queries.getSingleChallenge, [challenge_id]);
     res.status(200).json(challenge.rows[0]);
   } catch (error) {
     console.error("Fehler beim Abrufen der Herausforderung:", error);
@@ -43,11 +43,12 @@ const getSingleChallenge = async (req, res) => {
 };
 // Erstelle eine neue Herausforderung
 const createChallenge = async (req, res) => {
-  const { challengevl_id, startzeitpunkt, sportkl_id, gegner_sporkl_id } =
+  const { challengevl_id, startzeitpunkt, sportkl_id, gegner_sportkl_id } =
     req.body;
   const { sportl_id } = req.user;
 
   try {
+    await.pool.query('BEGIN');
     const newChallenge = await pool.query(queries.createChallenge, [
       challengevl_id,
       sportl_id,
@@ -59,11 +60,12 @@ const createChallenge = async (req, res) => {
     await pool.query(queries.addChallengeEnemy, [
       sportkl_id,
       challenge_id,
-      gegner_sporkl_id || null,
+      gegner_sportkl_id || null,
     ]);
-
+await pool.query('COMMIT');
     res.status(201).json(newChallenge.rows[0]);
   } catch (error) {
+    await pool.query('ROLLBACK');
     console.error("Fehler beim Erstellen der Herausforderung:", error);
     res.status(500).json({ message: "Interner Serverfehler" });
   }
@@ -87,9 +89,9 @@ const addActivityToChallenge = async (req, res) => {
       uhrzeit,
       datum,
       dauer,
-      anzahl_m,
-      anzahl_w,
-      anzahl_d,
+      anzahl_m || 0,
+      anzahl_w || 0,
+      anzahl_d || 0,
       challenge_id,
     ]);
     await pool.query(queries.updateChallenge, [meter, challenge_id]);
@@ -106,9 +108,18 @@ const addActivityToChallenge = async (req, res) => {
 };
 // Lösche eine Herausforderung
 const deleteChallenge = async (req, res) => {
-  const { id } = req.params;
+  const { challenge_id } = req.params;
   try {
-    await pool.query(queries.deleteChallenge, [id]);
+    if (isNaN(challenge_id)) {
+      return res.status(400).json({ message: "Ungültige Herausforderung" });
+    }
+    const result = await pool.query(queries.deleteChallenge, [challenge_id]);
+    if (result.rowCount === 0) {
+      return res
+        .status(404)
+        .json({ message: "Herausforderung nicht gefunden" });
+    }
+
     res.status(200).json({ message: "Herausforderung gelöscht" });
   } catch (error) {
     console.error("Fehler beim Löschen der Herausforderung:", error);

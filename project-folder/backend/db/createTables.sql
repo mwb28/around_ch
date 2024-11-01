@@ -66,6 +66,7 @@ CREATE TABLE IF NOT EXISTS challenge (
     startzeitpunkt TIMESTAMP NOT NULL,
     meters_completed INT DEFAULT 0,
     endzeitpunkt TIMESTAMP,
+    abgeschlossen BOOLEAN DEFAULT false,
     challengevl_id INT,
     sportl_id INT,
     FOREIGN KEY (challengevl_id) REFERENCES challenge_vorlage(challengevl_id) ON DELETE SET NULL ON UPDATE CASCADE,

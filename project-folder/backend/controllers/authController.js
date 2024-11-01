@@ -50,7 +50,7 @@ const loginUser = async (req, res) => {
     const token = jwt.sign({ id: userData.sportl_id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
-    console.log("Generated authToken:", token);
+    //console.log("Generated authToken:", token);
 
     // JWT als HTTP-Only-Cookie setzen, um es vor JavaScript-Zugriff zu schützen
     res.cookie("authToken", token, {
