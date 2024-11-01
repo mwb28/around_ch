@@ -72,7 +72,24 @@ CREATE TABLE IF NOT EXISTS challenge (
     FOREIGN KEY (challengevl_id) REFERENCES challenge_vorlage(challengevl_id) ON DELETE SET NULL ON UPDATE CASCADE,
     FOREIGN KEY (sportl_id) REFERENCES sportlehrperson(sportl_id) ON DELETE SET NULL ON UPDATE CASCADE
 );
+-- Tabelle Klassen Challenge Instanz
+CREATE TABLE IF NOT EXISTS klassen_challenge_instanz (
+    instanc_id SERIAL PRIMARY KEY,
+    meter_absolviert INT DEFAULT 0,
+    status VARCHAR(50) DEFAULT 'in_progress' CHECK (status IN ('in_progress', 'completed', 'waiting_for_opponent')),
+    sportkl_id INT,
+    challenge_id INT,
+    PRIMARY KEY (sportkl_id, challenge_id),
+    FOREIGN KEY (sportkl_id) REFERENCES sportklasse(sportkl_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (challenge_id) REFERENCES challenge(challenge_id) ON DELETE CASCADE ON UPDATE CASCADE
+);
 
+-- Tabelle Klassen Challenge Wettbewerb
+CREATE TABLE IF NOT EXISTS klassen_challenge_wettbewerb (
+    wettbewerb_id SERIAL PRIMARY KEY,
+    instanc_id INT,
+    FOREIGN KEY (instance_id) REFERENCES klassen_challenge_instanz(instance_id) ON DELETE CASCADE ON UPDATE CASCADE
+);
 -- Tabelle "Sportliche Leistung"
 CREATE TABLE IF NOT EXISTS sportlicheleistung (
     zaehler_id SERIAL PRIMARY KEY,
@@ -83,22 +100,11 @@ CREATE TABLE IF NOT EXISTS sportlicheleistung (
     anzahl_m INT,
     anzahl_w INT,
     anzahl_d INT,
-    challenge_id INT,
-    FOREIGN KEY (challenge_id) REFERENCES challenge(challenge_id) ON DELETE SET NULL ON UPDATE CASCADE
+    instanc_id INT,
+    FOREIGN KEY (instance_id) REFERENCES klassen_challenge_instanz(instance_id) ON DELETE SET NULL ON UPDATE CASCADE
   
 );
 
--- Tabelle "Teilnahme"
-CREATE TABLE IF NOT EXISTS nimmtteilan (
-    sportkl_id INT,
-    challenge_id INT,
-    gegner_sportkl_id INT,
-    PRIMARY KEY (sportkl_id, challenge_id),
-    CONSTRAINT check_sportkl_id CHECK (sportkl_id != gegner_sportkl_id),
-    FOREIGN KEY (sportkl_id) REFERENCES sportklasse(sportkl_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (challenge_id) REFERENCES challenge(challenge_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (gegner_sportkl_id) REFERENCES sportklasse(sportkl_id) ON DELETE CASCADE ON UPDATE CASCADE
-);
 -- Tabelle "Invalide Tokens"
 CREATE TABLE invalidated_tokens (
     id SERIAL PRIMARY KEY,

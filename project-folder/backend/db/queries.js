@@ -22,6 +22,8 @@ const addChallengeEnemy =
 const updateChallenge =
   "UPDATE challenge SET meters_completed = meters_completed + $1 WHERE challenge_id = $2";
 const deleteChallenge = "DELETE FROM challenge WHERE challenge_id = $1";
+const checkChallengeParticipation =
+  "SELECT * FROM nimmtteilan WHERE sportkl_id = $1 AND challenge_id = $2";
 
 module.exports = {
   registerUser,
