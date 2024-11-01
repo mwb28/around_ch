@@ -72,8 +72,57 @@ const createChallenge = async (req, res) => {
     res.status(500).json({ message: "Interner Serverfehler" });
   }
 };
+const create_instance_of_challenge = async (req, res) => {
+  const { meter_absolviert, status, sportkl_id, challenge_id } = req.body;
+
+  try {
+    // Start der Transaktion
+    await pool.query("BEGIN");
+    const challengeQuery = await pool.query(queries.challengeQuery, [
+      challenge_id,
+    ]);
+
+    // Überprüfen, ob die Challenge existiert
+    if (challengeQuery.rows.length === 0) {
+      await pool.query("ROLLBACK");
+      return res.status(404).json({ message: "Challenge nicht gefunden" });
+    }
+
+    const { endzeitpunkt, abgeschlossen } = challengeQuery.rows[0];
+
+    // Überprüfen, ob die Challenge abgeschlossen ist
+    if (abgeschlossen) {
+      await pool.query("ROLLBACK");
+      return res
+        .status(400)
+        .json({ message: "Herausforderung bereits abgeschlossen" });
+    }
+
+    // Überprüfen, ob die Challenge bereits abgelaufen ist
+    if (endzeitpunkt && new Date(endzeitpunkt) < new Date()) {
+      await pool.query("ROLLBACK");
+      return res
+        .status(400)
+        .json({ message: "Herausforderung bereits abgelaufen" });
+    }
+
+    const newInstanceOfChallenge = await pool.query(
+      queries.create_instance_of_challenge,
+      [meter_absolviert || 0, status || "in_progress", sportkl_id, challenge_id]
+    );
+
+    await pool.query("COMMIT");
+
+    res.status(201).json(newInstanceOfChallenge.rows[0]);
+  } catch (error) {
+    await pool.query("ROLLBACK");
+    console.error("Fehler beim Erstellen der Herausforderung:", error);
+    res.status(500).json({ message: "Interner Serverfehler" });
+  }
+};
+
 // Füge eine Aktivität zu einer Herausforderung hinzu
-const addActivityToChallenge = async (req, res) => {
+const addActivityToChallengeInstance = async (req, res) => {
   const {
     meter,
     uhrzeit,
@@ -133,6 +182,7 @@ module.exports = {
   getAllChallenges,
   getSingleChallenge,
   createChallenge,
+  create_instance_of_challenge,
   deleteChallenge,
-  addActivityToChallenge,
+  addActivityToChallengeInstance,
 };

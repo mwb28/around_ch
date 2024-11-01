@@ -5,7 +5,7 @@ const {
   getAllChallenges,
   getSingleChallenge,
   createChallenge,
-  addActivityToChallenge,
+  addActivityToChallengeInstance,
   deleteChallenge,
 } = require("../controllers/challengeController");
 
@@ -23,7 +23,7 @@ router.delete("/:challenge_id/delete", authenticateUser, deleteChallenge);
 router.post(
   "/:challenge_id/addActivity",
   authenticateUser,
-  addActivityToChallenge
+  addActivityToChallengeInstance
 );
 
 module.exports = router;
