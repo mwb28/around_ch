@@ -34,7 +34,9 @@ const getSingleChallenge = async (req, res) => {
   const { challenge_id } = req.params;
 
   try {
-    const challenge = await pool.query(queries.getSingleChallenge, [challenge_id]);
+    const challenge = await pool.query(queries.getSingleChallenge, [
+      challenge_id,
+    ]);
     res.status(200).json(challenge.rows[0]);
   } catch (error) {
     console.error("Fehler beim Abrufen der Herausforderung:", error);
@@ -48,7 +50,7 @@ const createChallenge = async (req, res) => {
   const { sportl_id } = req.user;
 
   try {
-    await.pool.query('BEGIN');
+    await pool.query("BEGIN");
     const newChallenge = await pool.query(queries.createChallenge, [
       challengevl_id,
       sportl_id,
@@ -62,10 +64,10 @@ const createChallenge = async (req, res) => {
       challenge_id,
       gegner_sportkl_id || null,
     ]);
-await pool.query('COMMIT');
+    await pool.query("COMMIT");
     res.status(201).json(newChallenge.rows[0]);
   } catch (error) {
-    await pool.query('ROLLBACK');
+    await pool.query("ROLLBACK");
     console.error("Fehler beim Erstellen der Herausforderung:", error);
     res.status(500).json({ message: "Interner Serverfehler" });
   }
