@@ -79,9 +79,8 @@ CREATE TABLE IF NOT EXISTS klassen_challenge_instanz (
     status VARCHAR(50) DEFAULT 'in_progress' CHECK (status IN ('in_progress', 'completed')),
     sportkl_id INT,
     challenge_id INT,
-    PRIMARY KEY (sportkl_id, challenge_id),
-    FOREIGN KEY (sportkl_id) REFERENCES sportklasse(sportkl_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (challenge_id) REFERENCES challenge(challenge_id) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (sportkl_id) REFERENCES sportklasse(sportkl_id) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (challenge_id) REFERENCES challenge(challenge_id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- Tabelle "Sportliche Leistung"
