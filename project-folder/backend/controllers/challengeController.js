@@ -13,6 +13,7 @@
 */
 const pool = require("../db/connect");
 const queries = require("../db/queries");
+
 // Zeige alle Herausforderungen an
 const getAllChallenges = async (req, res) => {
   const sportlId = req.user ? req.user.sportl_id : null;
@@ -29,6 +30,7 @@ const getAllChallenges = async (req, res) => {
     res.status(500).json({ message: "Interner Serverfehler" });
   }
 };
+
 // Zeige eine einzelne Herausforderung an
 const getSingleChallenge = async (req, res) => {
   const { challenge_id } = req.params;
@@ -43,11 +45,12 @@ const getSingleChallenge = async (req, res) => {
     res.status(500).json({ message: "Interner Serverfehler" });
   }
 };
+
 // Erstelle eine neue Herausforderung
 const createChallenge = async (req, res) => {
-  const { challengevl_id, startzeitpunkt, sportkl_id, gegner_sportkl_id } =
-    req.body;
+  const { challengevl_id, startzeitpunkt, sportkl_id } = req.body;
   const { sportl_id } = req.user;
+  const abgeschlossen = false;
 
   try {
     await pool.query("BEGIN");
@@ -55,15 +58,17 @@ const createChallenge = async (req, res) => {
       challengevl_id,
       sportl_id,
       startzeitpunkt,
+      abgeschlossen,
     ]);
-
-    const challenge_id = newChallenge.rows[0].challenge_id;
-
-    await pool.query(queries.addChallengeEnemy, [
-      sportkl_id,
-      challenge_id,
-      gegner_sportkl_id || null,
-    ]);
+    if (sportkl_id) {
+      const challengeId = newChallenge.rows[0].challenge_id;
+      await pool.query(queries.createInstanceOfChallenge, [
+        0, // Meter absolviert
+        "in_progress", // Status
+        sportkl_id,
+        challengeId,
+      ]);
+    }
     await pool.query("COMMIT");
     res.status(201).json(newChallenge.rows[0]);
   } catch (error) {
@@ -72,17 +77,17 @@ const createChallenge = async (req, res) => {
     res.status(500).json({ message: "Interner Serverfehler" });
   }
 };
+
+// Erstelle eine Instanz einer Herausforderung die bereits existiert
 const create_instance_of_challenge = async (req, res) => {
   const { meter_absolviert, status, sportkl_id, challenge_id } = req.body;
 
   try {
-    // Start der Transaktion
     await pool.query("BEGIN");
     const challengeQuery = await pool.query(queries.challengeQuery, [
       challenge_id,
     ]);
 
-    // Überprüfen, ob die Challenge existiert
     if (challengeQuery.rows.length === 0) {
       await pool.query("ROLLBACK");
       return res.status(404).json({ message: "Challenge nicht gefunden" });
@@ -90,7 +95,6 @@ const create_instance_of_challenge = async (req, res) => {
 
     const { endzeitpunkt, abgeschlossen } = challengeQuery.rows[0];
 
-    // Überprüfen, ob die Challenge abgeschlossen ist
     if (abgeschlossen) {
       await pool.query("ROLLBACK");
       return res
@@ -98,7 +102,6 @@ const create_instance_of_challenge = async (req, res) => {
         .json({ message: "Herausforderung bereits abgeschlossen" });
     }
 
-    // Überprüfen, ob die Challenge bereits abgelaufen ist
     if (endzeitpunkt && new Date(endzeitpunkt) < new Date()) {
       await pool.query("ROLLBACK");
       return res
@@ -121,7 +124,7 @@ const create_instance_of_challenge = async (req, res) => {
   }
 };
 
-// Füge eine Aktivität zu einer Herausforderung hinzu
+// Füge eine Aktivität zu einer Herausforderungsinstance hinzu
 const addActivityToChallengeInstance = async (req, res) => {
   const {
     meter,
@@ -131,10 +134,11 @@ const addActivityToChallengeInstance = async (req, res) => {
     anzahl_m,
     anzahl_w,
     anzahl_d,
-    challenge_id,
+    instance_id,
   } = req.body;
 
   try {
+    await pool.query("BEGIN");
     await pool.query(queries.addActivity, [
       meter,
       uhrzeit,
@@ -143,13 +147,15 @@ const addActivityToChallengeInstance = async (req, res) => {
       anzahl_m || 0,
       anzahl_w || 0,
       anzahl_d || 0,
-      challenge_id,
+      instance_id,
     ]);
-    await pool.query(queries.updateChallenge, [meter, challenge_id]);
+    await pool.query(queries.updateChallengeInstance, [meter, instance_id]);
+    await pool.query("COMMIT");
     res
       .status(201)
       .json({ message: "Aktivität hinzugefügt und Challenge aktualisiert" });
   } catch (error) {
+    await pool.query("ROLLBACK");
     console.error(
       "Fehler beim Hinzufügen der Aktivität oder Challenge:",
       error.message

@@ -24,8 +24,8 @@ const addActivity =
   "INSERT INTO sportlicheleistung (meter, uhrzeit, datum, dauer, anzahl_m, anzahl_w, anzahl_d, challenge_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)RETURNING *";
 // const addChallengeEnemy =
 //   "INSERT INTO nimmtteilan (sportkl_id, challenge_id, gegner_sportkl_id) VALUES ($1, $2, $3)";
-const updateChallenge =
-  "UPDATE challenge SET meters_completed = meters_completed + $1 WHERE challenge_id = $2";
+const updateChallengeInstance =
+  "UPDATE challenge_instance SET meters_absolviert = meter_absolviert + $1 WHERE instance_id = $2";
 const deleteChallenge = "DELETE FROM challenge WHERE challenge_id = $1";
 
 module.exports = {
@@ -40,7 +40,7 @@ module.exports = {
   addActivity,
   addChallengeEnemy,
   createChallenge,
-  updateChallenge,
+  updateChallengeInstance,
   deleteChallenge,
   create_instance_of_challenge,
   challengeQuery,
