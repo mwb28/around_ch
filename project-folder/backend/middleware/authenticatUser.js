@@ -1,6 +1,8 @@
 const jwt = require("jsonwebtoken");
+const pool = require("../db/connect");
+const queries = require("../db/queries");
 
-const authenticateUser = (req, res, next) => {
+const authenticateUser = async (req, res, next) => {
   const token = req.cookies.authToken;
 
   if (!token) {
@@ -10,7 +12,17 @@ const authenticateUser = (req, res, next) => {
   }
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = { sportl_id: decoded.id };
+    const sportl_id = decoded.id;
+    const result = await pool.query(queries.getSchulIdFromSportlId, [
+      sportl_id,
+    ]);
+
+    if (result.rows.length === 0) {
+      return res
+        .status(403)
+        .json({ message: "Nicht autorisiert: Benutzer nicht gefunden" });
+    }
+    req.user = { sportl_id, schul_id: result.rows[0].schul_id };
     next();
   } catch (error) {
     console.error("Fehler beim Überprüfen des Tokens:", error.message);

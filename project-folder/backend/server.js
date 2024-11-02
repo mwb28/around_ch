@@ -1,7 +1,10 @@
 require("dotenv").config();
 const pool = require("./db/connect");
+
+// routes
 const authRoutes = require("./routes/authRoutes");
 const challengeRoutes = require("./routes/challengeRoutes");
+const userRoutes = require("./routes/userRoutes");
 
 // express
 
@@ -12,11 +15,11 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
-// routes
-
 app.use(express.static("../frontend"));
+
 app.use("/api/v1/auth", authRoutes); // Authentication routes (register/login)
-app.use("/api/v1/challenges", challengeRoutes); // Challenge routes
+app.use("/api/v1/challenges", challengeRoutes);
+app.use("/api/v1/users", userRoutes);
 
 const port = process.env.PORT || 5000;
 pool.connect((err) => {

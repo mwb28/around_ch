@@ -48,25 +48,43 @@ const getSingleChallenge = async (req, res) => {
 
 // Erstelle eine neue Herausforderung
 const createChallenge = async (req, res) => {
-  const { challengevl_id, startzeitpunkt, sportkl_id } = req.body;
+  const { startzeitpunkt, endzeitpunkt, challengevl_id, sportkl_id } = req.body;
   const { sportl_id } = req.user;
   const abgeschlossen = false;
-
+  if (endzeitpunkt && new Date(endzeitpunkt) <= new Date(startzeitpunkt)) {
+    return res
+      .status(400)
+      .send({ error: "Endzeitpunkt muss nach dem Startzeitpunkt liegen." });
+  }
   try {
     await pool.query("BEGIN");
+    // Überprüft ob die angegebene Sportklasse existiert
+    if (sportkl_id) {
+      const klasseExistiert = await pool.query(queries.getSportklasseId, [
+        sportkl_id,
+      ]);
+      if (klasseExistiert.rows.length === 0) {
+        await pool.query("ROLLBACK");
+        return res
+          .status(400)
+          .json({ message: "Die angegebene Sportklasse existiert nicht." });
+      }
+    }
+    //neue Herausforderung und gleichzeitig eine Instanz erstellen
     const newChallenge = await pool.query(queries.createChallenge, [
+      startzeitpunkt,
+      endzeitpunkt,
+      abgeschlossen,
       challengevl_id,
       sportl_id,
-      startzeitpunkt,
-      abgeschlossen,
     ]);
     if (sportkl_id) {
-      const challengeId = newChallenge.rows[0].challenge_id;
+      const challenge_id = newChallenge.rows[0].challenge_id;
       await pool.query(queries.createInstanceOfChallenge, [
         0, // Meter absolviert
         "in_progress", // Status
         sportkl_id,
-        challengeId,
+        challenge_id,
       ]);
     }
     await pool.query("COMMIT");
@@ -134,7 +152,7 @@ const addActivityToChallengeInstance = async (req, res) => {
     anzahl_m,
     anzahl_w,
     anzahl_d,
-    instance_id,
+    instanz_id,
   } = req.body;
 
   try {
@@ -147,9 +165,9 @@ const addActivityToChallengeInstance = async (req, res) => {
       anzahl_m || 0,
       anzahl_w || 0,
       anzahl_d || 0,
-      instance_id,
+      instanz_id,
     ]);
-    await pool.query(queries.updateChallengeInstance, [meter, instance_id]);
+    await pool.query(queries.updateChallengeInstance, [meter, instanz_id]);
     await pool.query("COMMIT");
     res
       .status(201)

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+    <title>Dashboard</title>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="logo-container">
+          <img src="../assets/images/logo_small.png" alt="Logo" class="logo" />
+        </div>
+        <button class="logout-button" onclick="logout()">Logout</button>
+      </header>
+
+      <main>
+        <section class="active-challenges">
+          <h2>Meine aktiven Challenges</h2>
+          <div class="challenge-cards" id="activeChallenges">
+            <!-- Dynamische Challenge-Karten werden hier geladen -->
+          </div>
+          <button class="join-create-button">
+            Challenge beitreten oder erstellen
+          </button>
+        </section>
+
+        <section class="statistics">
+          <h3>Meine Statistik:</h3>
+          <ul>
+            <li>Total absolvierte Kilometer: <span id="totalKm"></span></li>
+            <li>Total absolvierte Stunden: <span id="totalHours"></span></li>
+            <li>Meine Sportklassen: <span id="mySportClasses"></span></li>
+          </ul>
+          <button class="register-sport-class-button">
+            Neue Sportklasse registrieren
+          </button>
+          <button class="archived-challenges-button">
+            Archivierte Challenges
+          </button>
+        </section>
+      </main>
+
+      <script src="../js/dashboard.js"></script>
+    </div>
+  </body>
+</html>

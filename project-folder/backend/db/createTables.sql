@@ -64,8 +64,7 @@ CREATE TABLE IF NOT EXISTS challenge_vorlage(
 CREATE TABLE IF NOT EXISTS challenge (
     challenge_id SERIAL PRIMARY KEY,
     startzeitpunkt TIMESTAMP NOT NULL,
-    meters_completed INT DEFAULT 0,
-    endzeitpunkt TIMESTAMP,
+    endzeitpunkt TIMESTAMP NOT NULL,
     abgeschlossen BOOLEAN DEFAULT false,
     challengevl_id INT,
     sportl_id INT,
@@ -74,7 +73,7 @@ CREATE TABLE IF NOT EXISTS challenge (
 );
 -- Tabelle Klassen Challenge Instanz
 CREATE TABLE IF NOT EXISTS klassen_challenge_instanz (
-    instance_id SERIAL PRIMARY KEY,
+    instanz_id SERIAL PRIMARY KEY,
     meter_absolviert INT DEFAULT 0,
     status VARCHAR(50) DEFAULT 'in_progress' CHECK (status IN ('in_progress', 'completed')),
     sportkl_id INT,
@@ -93,8 +92,8 @@ CREATE TABLE IF NOT EXISTS sportlicheleistung (
     anzahl_m INT,
     anzahl_w INT,
     anzahl_d INT,
-    instance_id INT,
-    FOREIGN KEY (instance_id) REFERENCES klassen_challenge_instanz(instance_id) ON DELETE SET NULL ON UPDATE CASCADE
+    instanz_id INT,
+    FOREIGN KEY (instanz_id) REFERENCES klassen_challenge_instanz(instanz_id) ON DELETE SET NULL ON UPDATE CASCADE
   
 );
 
