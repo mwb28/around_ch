@@ -23,6 +23,7 @@ INSERT INTO schule (schulname, kanton) VALUES
 ('Ecole de culture générale de Bienne et du Jura bernois', 'BE'),
 ('Fachmittelschule NMS Bern', 'BE');
 
+
 -- Test data
 
 INSERT INTO sportklasse ( sportkl_id,name,jahrgang,sportl_id,schul_id) VALUES (31,'28b',2009,27,2);

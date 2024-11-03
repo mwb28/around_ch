@@ -16,6 +16,13 @@ header {
   background-color: #d6eae1;
 }
 
+.user-info {
+  flex: 1;
+  text-align: right;
+  font-weight: bold;
+  padding-right: 1em;
+  color: #333;
+}
 .logo-container {
   flex: 1;
 }

@@ -1,12 +1,26 @@
 document.addEventListener("DOMContentLoaded", () => {
   loadActiveChallenges();
   loadStatistics();
+  loadUserName();
 });
+
+async function loadUserName() {
+  try {
+    const response = await fetch("http://localhost:5000/api/v1/users/current");
+    if (!response.ok) throw new Error("Fehler beim Laden des Benutzernamens");
+    const user = await response.json();
+    document.getElementById(
+      "userNameContainer"
+    ).textContent = `Angemeldet als: ${user.name}`;
+  } catch (error) {
+    console.error("Fehler beim Laden des Benutzernamens:", error);
+  }
+}
 
 async function loadActiveChallenges() {
   try {
     const response = await fetch(
-      "http://localhost:5000/api/v1/challenges/active"
+      "http://localhost:5000/api/v1/challenges/public"
     );
     if (!response.ok) throw new Error("Fehler beim Laden der Challenges");
     const challenges = await response.json();
@@ -67,7 +81,7 @@ function logout() {
   })
     .then((response) => {
       if (response.ok) {
-        window.location.href = "/views/login.html";
+        window.location.href = "/index.html";
       }
     })
     .catch((error) => {

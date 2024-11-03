@@ -15,6 +15,7 @@ const pool = require("../db/connect");
 const queries = require("../db/queries");
 
 // Zeige alle Herausforderungen an
+// Zeige alle Herausforderungen an
 const getAllChallenges = async (req, res) => {
   const sportlId = req.user ? req.user.sportl_id : null;
   try {
@@ -23,8 +24,29 @@ const getAllChallenges = async (req, res) => {
       challenges = await pool.query(queries.getAllUserChallenges, [sportlId]);
     } else {
       challenges = await pool.query(queries.getAllChallenges);
-      res.status(200).json(challenges.rows);
     }
+
+    // Bildpfad für jede Challenge dynamisch hinzufügen
+    const challengesWithImages = challenges.rows.map((challenge) => {
+      let imageUrl;
+
+      // Logik für den Bildpfad basierend auf challengevl_id
+      switch (challenge.challengevl_id) {
+        case 8:
+          imageUrl = "/assets/images/bielersee_small.png";
+          break;
+        case 9:
+          imageUrl = "/static/images/image_for_9.jpg";
+          break;
+        default:
+          imageUrl = "/static/images/default_image.jpg";
+      }
+
+      // Challenge-Objekt mit imageUrl zurückgeben
+      return { ...challenge, imageUrl };
+    });
+
+    res.status(200).json(challengesWithImages);
   } catch (error) {
     console.error("Fehler beim Abrufen der Herausforderungen:", error);
     res.status(500).json({ message: "Interner Serverfehler" });
@@ -46,6 +68,17 @@ const getSingleChallenge = async (req, res) => {
   }
 };
 
+const getAllTemplateChallenges = async (req, res) => {
+  try {
+    const templateChallenges = await pool.query(
+      queries.getAllTemplateChallenges
+    );
+    res.status(200).json(templateChallenges.rows);
+  } catch (error) {
+    console.error("Fehler beim Abrufen der Vorlagen-Herausforderungen:", error);
+    res.status(500).json({ message: "Interner Serverfehler" });
+  }
+};
 // Erstelle eine neue Herausforderung
 const createChallenge = async (req, res) => {
   const { startzeitpunkt, endzeitpunkt, challengevl_id, sportkl_id } = req.body;
@@ -205,6 +238,7 @@ const deleteChallenge = async (req, res) => {
 module.exports = {
   getAllChallenges,
   getSingleChallenge,
+  getAllTemplateChallenges,
   createChallenge,
   create_instance_of_challenge,
   deleteChallenge,

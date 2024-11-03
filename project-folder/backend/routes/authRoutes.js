@@ -10,6 +10,6 @@ const authenticateUser = require("../middleware/authenticatUser");
 
 //router.post("/register", registerUser);
 router.post("/login", loginUser);
-router.patch("/changePassword", changePassword);
+router.post("/changePassword", changePassword);
 router.post("/logout", authenticateUser, logoutUser);
 module.exports = router;

@@ -9,8 +9,30 @@ Admin und User Controller
 
 */
 
-// Registriere eine neue Sportklasse
+const pool = require("../db/connect");
+const queries = require("../db/queries");
+// get curret user info
+const userInfo = async (req, res) => {
+  const { sportl_id } = req.user;
+  try {
+    const user = await pool.query(queries.getUserInfo, [sportl_id]);
+    res
+      .status(200)
+      .json({ name: user.rows[0].vorname + " " + user.rows[0].nachname });
+  } catch (error) {
+    console.error("Fehler beim Abrufen der Benutzerinformationen:", error);
+    res.status(500).json({ message: "Interner Serverfehler" });
+  }
+};
 
+const checkUserStatus = (req, res) => {
+  res.status(200).json({
+    message: "Benutzer ist eingeloggt",
+    user: req.user,
+  });
+};
+
+// Registriere eine neue Sportklasse
 const registerSportklasse = async (req, res) => {
   const { name, jahrgang } = req.body;
   const { sportl_id, schul_id } = req.user;
@@ -28,4 +50,4 @@ const registerSportklasse = async (req, res) => {
     res.status(500).json({ message: "Interner Serverfehler" });
   }
 };
-module.exports = { registerSportklasse };
+module.exports = { userInfo, checkUserStatus, registerSportklasse };

@@ -68,7 +68,7 @@ const loginUser = async (req, res) => {
 
 // Passwort ändern und needs_password_change-Flag entfernen
 const changePassword = async (req, res) => {
-  const { email, oldPassword, newPassword, confirmPassword } = req.body;
+  const { email, oldPassword, newPassword, repeatPassword } = req.body;
 
   try {
     const trimmedEmail = email.trim().toLowerCase();
@@ -84,7 +84,7 @@ const changePassword = async (req, res) => {
     if (!validPassword) {
       return res.status(400).json({ message: "Falsches Passwort" });
     }
-    if (newPassword !== confirmPassword) {
+    if (newPassword !== repeatPassword) {
       return res
         .status(400)
         .json({ message: "Passwörter stimmen nicht überein" });

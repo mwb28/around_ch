@@ -4,8 +4,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function loadChallenges() {
   try {
-    // Beispiel-API-URL, die du an dein Backend anpassen solltest
-    const response = await fetch("/api/challenges");
+    const response = await fetch(
+      "http://localhost:5000/api/v1/challenges/public"
+    );
     if (!response.ok) {
       throw new Error("Fehler beim Laden der Challenges");
     }
@@ -13,10 +14,8 @@ async function loadChallenges() {
     const challenges = await response.json();
     const challengeCardsContainer = document.getElementById("challengeCards");
 
-    // Leert den Container, bevor neue Inhalte hinzugefügt werden
     challengeCardsContainer.innerHTML = "";
 
-    // Dynamisches Erzeugen der Challenge-Karten
     challenges.forEach((challenge) => {
       const challengeCard = document.createElement("div");
       challengeCard.classList.add("card");

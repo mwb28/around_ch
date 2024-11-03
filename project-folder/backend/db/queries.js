@@ -9,6 +9,9 @@ const insertinvalidatedToken =
 const getSchulIdFromSportlId =
   "SELECT schul_id FROM sportlehrperson WHERE sportl_id = $1";
 const getInvalidatedToken = "SELECT * FROM invalidated_tokens WHERE token = $1";
+
+// Userinfos
+const getUserInfo = "SELECT * FROM sportlehrperson WHERE sportl_id = $1";
 // Registeren der Sporklassen
 const registerSportklasse =
   "INSERT INTO sportklasse (name,jahrgang, schul_id, sportl_id) VALUES ($1, $2) RETURNING *";
@@ -17,6 +20,7 @@ const getSportklasseId =
 //Heruasforderungen
 const getAllChallenges = "SELECT * FROM challenge";
 const getSingleChallenge = "SELECT * FROM challenge WHERE challenge_id = $1";
+const getAllTemplateChallenges = "SELECT * FROM challenge_vorlage";
 const getAllUserChallenges = "SELECT * FROM challenge WHERE sportl_id = $1 ";
 const createChallenge =
   "INSERT INTO challenge (challengevl_id, sportl_id, startzeitpunkt, abgeschlossen) VALUES ($1, $2, $3, $4) RETURNING *";
@@ -38,6 +42,7 @@ module.exports = {
   registerUser,
   getUserByEmail,
   updatePasswordAndRemoveFlag,
+  getUserInfo,
   registerSportklasse,
   getSportklasseId,
   getSchulIdFromSportlId,
@@ -45,6 +50,7 @@ module.exports = {
   getInvalidatedToken,
   getAllChallenges,
   getSingleChallenge,
+  getAllTemplateChallenges,
   getAllUserChallenges,
   addActivity,
   createChallenge,

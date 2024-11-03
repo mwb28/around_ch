@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS schule (
 -- Tabelle "Sportlehrperson"
 CREATE TABLE IF NOT EXISTS sportlehrperson (
     sportl_id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
+    nachname VARCHAR(100) NOT NULL,
     vorname VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL,
     password_gehashed VARCHAR(255) NOT NULL,

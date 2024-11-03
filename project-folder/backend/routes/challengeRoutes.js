@@ -4,6 +4,7 @@ const authenticateUser = require("../middleware/authenticatUser");
 const {
   getAllChallenges,
   getSingleChallenge,
+  getAllTemplateChallenges,
   createChallenge,
   addActivityToChallengeInstance,
   deleteChallenge,
@@ -12,6 +13,7 @@ const {
 // Öffentliche Routen
 router.get("/public", getAllChallenges);
 router.get("/public/single/:challenge_id", getSingleChallenge);
+router.get("/templates", getAllTemplateChallenges);
 
 // Private Routen
 // to do...
