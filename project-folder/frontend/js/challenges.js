@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loadChallenges();
 });
 
-async function loadChallenges() {
+async function loadChallenges(showAll = false) {
   try {
     const response = await fetch(
       "http://localhost:5000/api/v1/challenges/public"
@@ -15,8 +15,9 @@ async function loadChallenges() {
     const challengeCardsContainer = document.getElementById("challengeCards");
 
     challengeCardsContainer.innerHTML = "";
+    const challengesToShow = showAll ? challenges : challenges.slice(0, 2);
 
-    challenges.forEach((challenge) => {
+    challengesToShow.forEach((challenge) => {
       const challengeCard = document.createElement("div");
       challengeCard.classList.add("card");
 
@@ -47,3 +48,8 @@ async function loadChallenges() {
     console.error("Fehler beim Laden der Challenges:", error);
   }
 }
+document
+  .querySelector(".all-challenges-button")
+  .addEventListener("click", () => {
+    loadChallenges(true); // Zeigt alle Challenges an
+  });
