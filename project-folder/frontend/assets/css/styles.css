@@ -18,6 +18,11 @@ header {
   padding: 1em 2em;
   background-color: #d6eae1;
 }
+h1 {
+  color: #102c47;
+  font-size: 2.5em;
+  font-weight: bold;
+}
 
 .user-info {
   flex: 1;
@@ -36,7 +41,7 @@ header {
 
 .login-card {
   display: grid;
-  justify-content: space-between;
+  justify-content: normal;
   align-items: center;
   background-color: #ffffff;
   border-radius: 15px;
@@ -70,6 +75,23 @@ header {
   cursor: pointer;
   border-radius: 5px;
 }
+.login-links {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  width: 100%;
+}
+
+.login-links a {
+  color: #4a90e2;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.login-links a:hover {
+  color: #357ab7;
+}
 
 .intro {
   display: flex;
@@ -97,7 +119,6 @@ header {
 
 .challenges {
   padding: 1em 3em 3em 3em;
-  text-align: center;
 }
 
 .challenge-cards {
