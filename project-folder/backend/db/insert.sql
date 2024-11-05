@@ -26,5 +26,10 @@ INSERT INTO schule (schulname, kanton) VALUES
 
 -- Test data
 
-INSERT INTO sportklasse ( sportkl_id,name,jahrgang,sportl_id,schul_id) VALUES (31,'28b',2009,27,2);
-INSERT INTO sportklasse ( sportkl_id,name,jahrgang,sportl_id,schul_id) VALUES (32,'28a',2009,27,2);
+INSERT INTO sportklasse (name,jahrgang,sportl_id,schul_id) VALUES 
+('28b',2009,27,2),
+('28a',2009,27,2),
+('5ab', 2000,26,4),
+('4cd', 2008,26,4);
+
+INSERT INTO challenges 

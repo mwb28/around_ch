@@ -27,26 +27,26 @@ const getAllChallenges = async (req, res) => {
     }
 
     // Bildpfad für jede Challenge dynamisch hinzufügen
-    const challengesWithImages = challenges.rows.map((challenge) => {
-      let imageUrl;
+    const challengesNoImage = challenges.rows.map((challenge) => {
+      // let imageUrl;
 
       // Logik für den Bildpfad basierend auf challengevl_id
-      switch (challenge.challengevl_id) {
-        case 8:
-          imageUrl = "/assets/images/bielersee_small.png";
-          break;
-        case 9:
-          imageUrl = "/static/images/image_for_9.jpg";
-          break;
-        default:
-          imageUrl = "/static/images/default_image.jpg";
-      }
+      // switch (challenge.challengevl_id) {
+      //   case 8:
+      //     imageUrl = "/assets/images/bielersee_small.png";
+      //     break;
+      //   case 9:
+      //     imageUrl = "/static/images/image_for_9.jpg";
+      //     break;
+      //   default:
+      //     imageUrl = "/static/images/default_image.jpg";
+      // }
 
       // Challenge-Objekt mit imageUrl zurückgeben
-      return { ...challenge, imageUrl };
+      return { ...challenge };
     });
 
-    res.status(200).json(challengesWithImages);
+    res.status(200).json(challengesNoImage);
   } catch (error) {
     console.error("Fehler beim Abrufen der Herausforderungen:", error);
     res.status(500).json({ message: "Interner Serverfehler" });
@@ -103,6 +103,7 @@ const createChallenge = async (req, res) => {
           .json({ message: "Die angegebene Sportklasse existiert nicht." });
       }
     }
+
     //neue Herausforderung und gleichzeitig eine Instanz erstellen
     const newChallenge = await pool.query(queries.createChallenge, [
       startzeitpunkt,

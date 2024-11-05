@@ -14,16 +14,18 @@ const getInvalidatedToken = "SELECT * FROM invalidated_tokens WHERE token = $1";
 const getUserInfo = "SELECT * FROM sportlehrperson WHERE sportl_id = $1";
 // Registeren der Sporklassen
 const registerSportklasse =
-  "INSERT INTO sportklasse (name,jahrgang, schul_id, sportl_id) VALUES ($1, $2) RETURNING *";
+  "INSERT INTO sportklasse (name,jahrgang, schul_id, sportl_id) VALUES ($1, $2, $3, $4) RETURNING *";
 const getSportklasseId =
   "SELECT sportkl_id FROM sportklasse WHERE sportkl_id = $1";
 //Heruasforderungen
-const getAllChallenges = "SELECT * FROM challenge";
+const getAllChallenges =
+  "SELECT challenge.challenge_id,challenge.startzeitpunkt,challenge.endzeitpunkt,challenge_vorlage.name_der_challenge, challenge_vorlage.total_meter,challenge_vorlage.geojson_daten FROM challenge JOIN challenge_vorlage ON challenge.challengevl_id = challenge_vorlage.challengevl_id WHERE challenge.abgeschlossen = false";
+
 const getSingleChallenge = "SELECT * FROM challenge WHERE challenge_id = $1";
 const getAllTemplateChallenges = "SELECT * FROM challenge_vorlage";
 const getAllUserChallenges = "SELECT * FROM challenge WHERE sportl_id = $1 ";
 const createChallenge =
-  "INSERT INTO challenge (challengevl_id, sportl_id, startzeitpunkt, abgeschlossen) VALUES ($1, $2, $3, $4) RETURNING *";
+  "INSERT INTO challenge (startzeitpunkt, endzeitpunkt, abgeschlossen, challengevl_id, sportl_id) VALUES ($1, $2, $3, $4, $5) RETURNING *";
 
 const createInstanceOfChallenge =
   "INSERT INTO klassen_challenge_instanz (meter_absolviert, status, sportkl_id, challenge_id) VALUES ($1, $2, $3, $4) RETURNING *";

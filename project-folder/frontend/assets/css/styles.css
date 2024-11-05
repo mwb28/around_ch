@@ -6,6 +6,9 @@ body {
   padding: 0;
   box-sizing: border-box;
   background-color: #d6eae1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 header {
@@ -31,6 +34,34 @@ header {
   height: 50px;
 }
 
+.login-card {
+  display: grid;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  width: 300px;
+}
+.input-group {
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
 .login-button {
   background-color: #ffffff;
   color: #000000;
@@ -44,7 +75,7 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 2em;
+  padding: 2em 3em 1em 3em;
   text-align: left;
 }
 
@@ -65,7 +96,7 @@ header {
 }
 
 .challenges {
-  padding: 2em;
+  padding: 1em 3em 3em 3em;
   text-align: center;
 }
 
@@ -73,20 +104,27 @@ header {
   display: flex;
   justify-content: space-between;
   margin-top: 1em;
+  flex-wrap: wrap;
 }
 
-.card1,
-.card2 {
+.card {
   background-color: #ffffff;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 300px;
+  width: 100%;
+  max-width: 400px;
   text-align: left;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 2em;
 }
 
-.card-image img {
+.map-container {
   width: 100%;
-  border-radius: 10px 10px 0 0;
+  height: 200px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  overflow: hidden;
 }
 
 .card-content {

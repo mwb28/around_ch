@@ -16,6 +16,8 @@ router.get("/authcheck", authenticateUser, checkUserStatus);
 //router.get("/infoUser, authenticateUser, getUserInfo");
 router.get("/current", authenticateUser, userInfo);
 // Registriere eine neue Sportklasse
-router.route("/registerSporklasse").post(authenticateUser, registerSportklasse);
+router
+  .route("/registerSportklasse")
+  .post(authenticateUser, registerSportklasse);
 
 module.exports = router;
