@@ -6,7 +6,6 @@ body {
   padding: 0;
   box-sizing: border-box;
   background-color: #d6eae1;
-  display: flex;
   justify-content: center;
   align-items: center;
 }
@@ -152,25 +151,73 @@ h1 {
   padding: 1em;
 }
 
+.challenges-large-view {
+  padding: 2em 3em;
+}
+
+.challenge-large-card {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1em;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.challenge-details {
+  flex: 1;
+  font-size: 1.1em;
+  margin: 0 1em 0 0;
+}
+
+.challenge-details h3 {
+  font-size: 1em;
+  font-weight: bold;
+  color: #102c47;
+}
+
+.challenge-details p {
+  margin: 0.5em 0;
+}
+
+.map-preview {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.map-preview img {
+  max-width: 100%;
+  border-radius: 10px;
+  height: auto;
+}
+.map-preview-large {
+  width: 100%;
+  border-radius: 10px;
+  height: auto;
+}
 .buttons {
   display: flex;
   justify-content: space-between;
   gap: 2em;
   margin-top: 2em;
 }
-
-.all-challenges-button,
-.how-it-works-button {
-  background-color: #ffffff;
-  color: #000000;
-  border: 2px solid #000000;
+.back-button {
+  background-color: #d6eae1;
+  color: #000;
+  border: 2px solid #000;
   padding: 1em 2em;
-  cursor: pointer;
   border-radius: 5px;
-  transition: background-color 0.3s;
+  cursor: pointer;
 }
-.how-it-works-button {
-  background-color: #8990d9;
+
+.all-challenges-button {
+  background-color: #ffffff;
   color: #000000;
   border: 2px solid #000000;
   padding: 1em 2em;
@@ -180,6 +227,23 @@ h1 {
 }
 
 .all-challenges-button:hover,
-.how-it-works-button:hover {
+.back-button:hover {
   background-color: #d6eae1;
+}
+.challenge-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1em;
+}
+
+.challenge-table th,
+.challenge-table td {
+  padding: 0.25em;
+
+  text-align: left;
+}
+
+.challenge-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
 }

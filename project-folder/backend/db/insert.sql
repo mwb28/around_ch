@@ -32,4 +32,7 @@ INSERT INTO sportklasse (name,jahrgang,sportl_id,schul_id) VALUES
 ('5ab', 2000,26,4),
 ('4cd', 2008,26,4);
 
-INSERT INTO challenges 
+INSERT INTO klassen_challenge_instanz(meter_absolviert, sportkl_id, challenge_id) VALUES
+(15000,34,5 ),
+(20000,32,5),
+(30500,33,6),

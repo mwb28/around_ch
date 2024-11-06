@@ -37,14 +37,24 @@ async function loadChallenges(showAll = false) {
       description2.textContent =
         "Startzeitpunkt: " +
         new Date(challenge.startzeitpunkt).toLocaleString("de-CH");
+      const description3 = document.createElement("p");
+      description3.textContent =
+        "Endzeitpunkt: " +
+        new Date(challenge.endzeitpunkt).toLocaleString("de-CH");
+      const description4 = document.createElement("p");
+      description4.textContent = "Total Meter: " + challenge.total_meter;
+
       const link = document.createElement("a");
-      link.href = "challenge.html?challengeId=" + challenge.challenge_id;
-      link.textContent = "View Challenge";
+      link.href =
+        "./views/einzel-challenge.html?challengeId=" + challenge.challenge_id;
+      link.textContent = " Einzel Challenge";
       link.classList.add("challenge-link");
 
       cardContent.appendChild(title);
       cardContent.appendChild(description1);
       cardContent.appendChild(description2);
+      cardContent.appendChild(description3);
+      cardContent.appendChild(description4);
       cardContent.appendChild(link);
 
       challengeCard.appendChild(cardContent);
@@ -86,6 +96,7 @@ async function loadChallenges(showAll = false) {
 
         // Passe den Kartenausschnitt so an, dass die gesamte GeoJSON-Linie sichtbar ist
         map.fitBounds(geoJsonLayer.getBounds());
+        // alle Instanzen der Challenge anzeigen
       } else {
         console.warn(
           `Keine GeoJSON-Daten für Challenge mit ID ${challenge.challenge_id} vorhanden.`

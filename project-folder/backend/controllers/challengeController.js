@@ -52,6 +52,30 @@ const getAllChallenges = async (req, res) => {
     res.status(500).json({ message: "Interner Serverfehler" });
   }
 };
+const getAllUserChallengesOfsameChallengeId = async (req, res) => {
+  const { challenge_id } = req.params;
+  if (challenge_id) {
+    try {
+      const result = await pool.query(
+        queries.getAllUserChallengesOfsameChallengeId,
+        [challenge_id]
+      );
+      const challenges = result.rows.map((row) => ({
+        instanz_id: row.instanz_id,
+        name_der_challenge: row.name_der_challenge,
+        meter_absolviert: row.meter_absolviert,
+        sportklasse: row.sprtklasse_name,
+        schule: row.schulname,
+      }));
+      res.status(200).json(challenges);
+    } catch (error) {
+      console.error("Fehler beim Abrufen der Herausforderungen:", error);
+      res.status(500).json({ message: "Interner Serverfehler" });
+    }
+  } else {
+    res.status(400).json({ message: "Keine Challenge ID angegeben" });
+  }
+};
 
 // Zeige eine einzelne Herausforderung an
 const getSingleChallenge = async (req, res) => {
@@ -238,6 +262,7 @@ const deleteChallenge = async (req, res) => {
 
 module.exports = {
   getAllChallenges,
+  getAllUserChallengesOfsameChallengeId,
   getSingleChallenge,
   getAllTemplateChallenges,
   createChallenge,
