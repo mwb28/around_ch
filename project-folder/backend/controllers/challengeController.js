@@ -16,14 +16,14 @@ const queries = require("../db/queries");
 
 // Zeige alle Herausforderungen an
 // Zeige alle Herausforderungen an
-const getAllChallenges = async (req, res) => {
+const getAllActiveChallenges = async (req, res) => {
   const sportlId = req.user ? req.user.sportl_id : null;
   try {
     let challenges;
     if (sportlId) {
       challenges = await pool.query(queries.getAllUserChallenges, [sportlId]);
     } else {
-      challenges = await pool.query(queries.getAllChallenges);
+      challenges = await pool.query(queries.getAllActvieChallenges);
     }
 
     // Bildpfad für jede Challenge dynamisch hinzufügen
@@ -199,6 +199,17 @@ const create_instance_of_challenge = async (req, res) => {
     res.status(500).json({ message: "Interner Serverfehler" });
   }
 };
+const getAllArchiveChallenges = async (req, res) => {
+  const { sportl_id } = req.user;
+  try {
+    const archiveChallenges = await pool.query(
+      queries.getAllArchiveChallenges[sportl_id]
+    );
+    res.status(200).json(archiveChallenges.rows[0]);
+  } catch (error) {}
+  console.error("Fehler beim landen der Herausfordeungen:", error);
+  res.status(500).json({ message: "Interner Severfehler" });
+};
 
 // Füge eine Aktivität zu einer Herausforderungsinstance hinzu
 const addActivityToChallengeInstance = async (req, res) => {
@@ -261,12 +272,13 @@ const deleteChallenge = async (req, res) => {
 };
 
 module.exports = {
-  getAllChallenges,
+  getAllActiveChallenges,
   getAllUserChallengesOfsameChallengeId,
   getSingleChallenge,
   getAllTemplateChallenges,
   createChallenge,
   create_instance_of_challenge,
+  getAllArchiveChallenges,
   deleteChallenge,
   addActivityToChallengeInstance,
 };

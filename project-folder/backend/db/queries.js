@@ -18,7 +18,8 @@ const registerSportklasse =
 const getSportklasseId =
   "SELECT sportkl_id FROM sportklasse WHERE sportkl_id = $1";
 //Heruasforderungen
-const getAllChallenges = `SELECT challenge.challenge_id,
+const getAllActiveChallenges = `SELECT 
+  challenge.challenge_id,
   challenge.startzeitpunkt,
   challenge.endzeitpunkt,
   challenge_vorlage.name_der_challenge, 
@@ -26,7 +27,8 @@ const getAllChallenges = `SELECT challenge.challenge_id,
   FROM challenge JOIN challenge_vorlage 
   ON challenge.challengevl_id = challenge_vorlage.challengevl_id 
   WHERE challenge.abgeschlossen = false`;
-const getAllUserChallengesOfsameChallengeId = ` SELECT kci.instanz_id, 
+const getAllUserChallengesOfsameChallengeId = ` SELECT 
+kci.instanz_id, 
 kci.meter_absolviert, 
 kci.sportkl_id, 
 sk.name AS sprtklasse_name,
@@ -67,12 +69,14 @@ const createInstanceOfChallenge = `INSERT INTO klassen_challenge_instanz
 const challengeQuery =
   "SECLET endzeitpunkt, abgeschlossen FORM challenge WHERE challenge_id = $1";
 //Akitivitäten
-const addActivity =
-  "INSERT INTO sportlicheleistung (meter, uhrzeit, datum, dauer, anzahl_m, anzahl_w, anzahl_d, challenge_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)RETURNING *";
+const addActivity = `INSERT INTO sportlicheleistung 
+      (meter, uhrzeit, datum, dauer, anzahl_m, anzahl_w, anzahl_d, challenge_id) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)RETURNING `;
 // const addChallengeEnemy =
 //   "INSERT INTO nimmtteilan (sportkl_id, challenge_id, gegner_sportkl_id) VALUES ($1, $2, $3)";
 const updateChallengeInstance =
   "UPDATE challenge_instance SET meters_absolviert = meter_absolviert + $1 WHERE instanz_id = $2";
+const getAllArchiveChallenges = `SELECT * FROM challenge WHERE abgeschossen = true AND sportl_id = $1`;
 const deleteChallenge = "DELETE FROM challenge WHERE challenge_id = $1";
 
 module.exports = {
@@ -85,7 +89,7 @@ module.exports = {
   getSchulIdFromSportlId,
   insertinvalidatedToken,
   getInvalidatedToken,
-  getAllChallenges,
+  getAllActiveChallenges,
   getAllUserChallengesOfsameChallengeId,
   getSingleChallenge,
   getAllTemplateChallenges,
@@ -93,6 +97,7 @@ module.exports = {
   addActivity,
   createChallenge,
   updateChallengeInstance,
+  getAllArchiveChallenges,
   deleteChallenge,
   createInstanceOfChallenge,
   challengeQuery,

@@ -10,40 +10,54 @@
     <div class="container">
       <header>
         <div class="logo-container">
-          <img src="../assets/images/logo_small.png" alt="Logo" class="logo" />
+          <a href="../index.html"
+            ><img src="../assets/images/logo_small.png" alt="Logo" class="logo"
+          /></a>
         </div>
         <div class="user-info" id="userNameContainer"></div>
         <button class="logout-button" onclick="logout()">Logout</button>
       </header>
 
       <main>
-        <section class="active-challenges">
+        <!-- Active Challenges Section -->
+        <section class="dashboard-section">
           <h2>Meine aktiven Challenges</h2>
-          <div class="challenge-cards" id="activeChallenges">
-            <!-- Dynamische Challenge-Karten werden hier geladen -->
+          <div id="activeChallenges" class="active-challenges">
+            <!-- Active challenges will be populated here by JavaScript -->
           </div>
-          <button class="join-create-button">
-            Challenge beitreten oder erstellen
+        </section>
+
+        <!-- User Statistics Section -->
+        <section class="dashboard-section stats">
+          <h3>Meine Statistik</h3>
+          <p>Total absolvierte Kilometer: <span id="totalKm"></span></p>
+          <p>Total absolvierte Einheiten: <span id="totalHours"></span></p>
+          <p>Meine Sportklasse(n): <span id="mySportClasses"></span></p>
+          <button class="register-class">Neue Sportklasse registrieren</button>
+        </section>
+
+        <!-- Select Challenges Section -->
+        <section class="dashboard-section">
+          <h2>Aktive Challenges Auswählen</h2>
+          <div id="selectChallenges" class="select-challenges">
+            <!-- Selectable challenges and sport class dropdown will be populated here by JavaScript -->
+          </div>
+          <button class="submit-button" onclick="submitSelection()">
+            Challenge beitreten
           </button>
         </section>
 
-        <section class="statistics">
-          <h3>Meine Statistik:</h3>
-          <ul>
-            <li>Total absolvierte Kilometer: <span id="totalKm"></span></li>
-            <li>Total absolvierte Stunden: <span id="totalHours"></span></li>
-            <li>Meine Sportklassen: <span id="mySportClasses"></span></li>
-          </ul>
-          <button class="register-sport-class-button">
-            Neue Sportklasse registrieren
-          </button>
-          <button class="archived-challenges-button">
-            Archivierte Challenges
-          </button>
+        <!-- Create New Challenge Section -->
+        <section class="dashboard-section">
+          <h2>Neue Challenge erstellen</h2>
+          <div id="createChallenges" class="create-challenges">
+            <!-- New challenges will be populated here by JavaScript -->
+          </div>
         </section>
       </main>
-      <script src="../js/authCheck.js"></script>
-      <script src="../js/dashboard.js"></script>
+
+      <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+      <script src="js/dashboard.js"></script>
     </div>
   </body>
 </html>
