@@ -144,7 +144,7 @@ async function initializeMap(challenge, challengeId) {
                 <div style="background-color: ${color}; width: 14px; height: 14px; border-radius: 50%;"></div>
                 
                 <!-- Teilnehmername und Sportklasse mit größerer und fetterer Schrift -->
-                <span style="margin-left: 12px; font-size: 16px; font-weight: bold; color: ${color};">
+                <span style="margin-left: 12px; font-size: 18px; font-weight: bold; color: ${color};">
                   ${sportklasse}
                 </span>
               </div>`,

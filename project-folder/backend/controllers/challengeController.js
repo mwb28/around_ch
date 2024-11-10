@@ -21,9 +21,9 @@ const getAllActiveChallenges = async (req, res) => {
   try {
     let challenges;
     if (sportlId) {
-      challenges = await pool.query(queries.getAllUserChallenges, [sportlId]);
+      challenges = await pool.query(queries.allUserChallenges, [sportlId]);
     } else {
-      challenges = await pool.query(queries.getAllActvieChallenges);
+      challenges = await pool.query(queries.allActiveChallenges);
     }
 
     // Bildpfad für jede Challenge dynamisch hinzufügen

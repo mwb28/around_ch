@@ -18,7 +18,7 @@ const registerSportklasse =
 const getSportklasseId =
   "SELECT sportkl_id FROM sportklasse WHERE sportkl_id = $1";
 //Heruasforderungen
-const getAllActiveChallenges = `SELECT 
+const allActiveChallenges = `SELECT 
   challenge.challenge_id,
   challenge.startzeitpunkt,
   challenge.endzeitpunkt,
@@ -58,7 +58,15 @@ const getSingleChallenge = `  SELECT
   WHERE 
     c.challenge_id = $1`;
 const getAllTemplateChallenges = "SELECT * FROM challenge_vorlage";
-const getAllUserChallenges = "SELECT * FROM challenge WHERE sportl_id = $1 ";
+const allUserChallenges = `SELECT 
+  challenge.challenge_id,
+  challenge.startzeitpunkt,
+  challenge.endzeitpunkt,
+  challenge_vorlage.name_der_challenge, 
+  challenge_vorlage.total_meter,challenge_vorlage.geojson_daten 
+  FROM challenge JOIN challenge_vorlage 
+  ON challenge.challengevl_id = challenge_vorlage.challengevl_id 
+  WHERE challenge.abgeschlossen = 'false' AND challenge.sportl_id = $1`;
 const createChallenge = `INSERT INTO challenge 
   (startzeitpunkt, endzeitpunkt, abgeschlossen, challengevl_id, sportl_id) 
   VALUES ($1, $2, $3, $4, $5) RETURNING *`;
@@ -89,11 +97,11 @@ module.exports = {
   getSchulIdFromSportlId,
   insertinvalidatedToken,
   getInvalidatedToken,
-  getAllActiveChallenges,
+  allActiveChallenges,
   getAllUserChallengesOfsameChallengeId,
   getSingleChallenge,
   getAllTemplateChallenges,
-  getAllUserChallenges,
+  allUserChallenges,
   addActivity,
   createChallenge,
   updateChallengeInstance,

@@ -158,6 +158,16 @@ h1 {
   flex-direction: column;
   margin-bottom: 2em;
 }
+.largecard {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 2em;
+}
 
 .map-container {
   width: 100%;
@@ -290,5 +300,15 @@ h1 {
 .active-challenges {
   display: flex;
   flex-direction: column;
+  gap: 1em;
+}
+.dashboard-section .card-content {
+  flex-basis: 20%;
+  padding: 1em;
+}
+.dashboard-section .largecard {
+  display: flex;
+  flex-direction: row; /* Nebeneinander-Anordnung */
+  width: 100%; /* Die Karte erstreckt sich über die gesamte Breite der Sektion */
   gap: 1em;
 }
