@@ -17,18 +17,15 @@ async function loadChallengeDetail() {
     const participantsResponse = await fetch(
       `http://localhost:5000/api/v1/challenges/public/pendingInstanzes/${challengeId}`
     );
-    if (!participantsResponse.ok) {
-      throw new Error("Fehler beim Laden der Teilnehmerdaten.");
-    }
-    const participants = await participantsResponse.json();
 
     // Streckendaten und zusätzliche Details zur Challenge laden
     const challengeResponse = await fetch(
       `http://localhost:5000/api/v1/challenges/public/single/${challengeId}`
     );
-    if (!challengeResponse.ok) {
+    if (!challengeResponse.ok || !participantsResponse.ok) {
       throw new Error("Fehler beim Laden der Challenge-Daten.");
     }
+    const participants = await participantsResponse.json();
     const challengeDetails = await challengeResponse.json();
 
     // Challenge-Route und Teilnehmerdaten kombinieren
@@ -143,7 +140,6 @@ async function initializeMap(challenge, challengeId) {
               
                 <div style="background-color: ${color}; width: 14px; height: 14px; border-radius: 50%;"></div>
                 
-                <!-- Teilnehmername und Sportklasse mit größerer und fetterer Schrift -->
                 <span style="margin-left: 12px; font-size: 18px; font-weight: bold; color: ${color};">
                   ${sportklasse}
                 </span>

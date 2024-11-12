@@ -15,6 +15,7 @@ const getUserInfo = "SELECT * FROM sportlehrperson WHERE sportl_id = $1";
 // Registeren der Sporklassen
 const registerSportklasse =
   "INSERT INTO sportklasse (name,jahrgang, schul_id, sportl_id) VALUES ($1, $2, $3, $4) RETURNING *";
+const allSportClasses = "SELECT * FROM sportklasse WHERE sportl_id = $1";
 const getSportklasseId =
   "SELECT sportkl_id FROM sportklasse WHERE sportkl_id = $1";
 //Heruasforderungen
@@ -22,8 +23,9 @@ const allActiveChallenges = `SELECT
   challenge.challenge_id,
   challenge.startzeitpunkt,
   challenge.endzeitpunkt,
+  challenge_vorlage.challengevl_id,
   challenge_vorlage.name_der_challenge, 
-  challenge_vorlage.total_meter,challenge_vorlage.geojson_daten 
+challenge_vorlage.total_meter,challenge_vorlage.geojson_daten 
   FROM challenge JOIN challenge_vorlage 
   ON challenge.challengevl_id = challenge_vorlage.challengevl_id 
   WHERE challenge.abgeschlossen = false`;
@@ -57,16 +59,38 @@ const getSingleChallenge = `  SELECT
     challenge_vorlage cv ON c.challengevl_id = cv.challengevl_id
   WHERE 
     c.challenge_id = $1`;
-const getAllTemplateChallenges = "SELECT * FROM challenge_vorlage";
+const getAllTemplateChallenges = `SELECT 
+    challenge_vorlage.name_der_challenge,
+    challenge_vorlage.total_meter
+    FROM challenge_vorlage`;
 const allUserChallenges = `SELECT 
-  challenge.challenge_id,
-  challenge.startzeitpunkt,
-  challenge.endzeitpunkt,
-  challenge_vorlage.name_der_challenge, 
-  challenge_vorlage.total_meter,challenge_vorlage.geojson_daten 
-  FROM challenge JOIN challenge_vorlage 
-  ON challenge.challengevl_id = challenge_vorlage.challengevl_id 
-  WHERE challenge.abgeschlossen = 'false' AND challenge.sportl_id = $1`;
+    cv.name_der_challenge,
+    STRING_AGG(DISTINCT sk_own.name, ', ') AS eigene_sportklassen,
+    STRING_AGG(DISTINCT sk_other.name, ', ') AS andere_sportklassen,
+    c.startzeitpunkt,
+    c.endzeitpunkt,
+    cv.total_meter
+FROM 
+    challenge c
+JOIN 
+    challenge_vorlage cv ON c.challengevl_id = cv.challengevl_id
+JOIN 
+    klassen_challenge_instanz kci ON kci.challenge_id = c.challenge_id
+LEFT JOIN 
+    sportklasse sk_own ON kci.sportkl_id = sk_own.sportkl_id AND sk_own.sportl_id = $1
+LEFT JOIN 
+    sportklasse sk_other ON kci.sportkl_id = sk_other.sportkl_id AND sk_other.sportl_id <> $1
+WHERE 
+    c.abgeschlossen = false
+    AND c.sportl_id = $1
+    AND kci.status = 'in_progress'
+GROUP BY 
+    cv.name_der_challenge, c.startzeitpunkt, c.endzeitpunkt, cv.total_meter
+HAVING 
+    STRING_AGG(DISTINCT sk_own.name, ', ') IS NOT NULL
+ORDER BY 
+    c.startzeitpunkt;
+`;
 const createChallenge = `INSERT INTO challenge 
   (startzeitpunkt, endzeitpunkt, abgeschlossen, challengevl_id, sportl_id) 
   VALUES ($1, $2, $3, $4, $5) RETURNING *`;
@@ -93,6 +117,7 @@ module.exports = {
   updatePasswordAndRemoveFlag,
   getUserInfo,
   registerSportklasse,
+  allSportClasses,
   getSportklasseId,
   getSchulIdFromSportlId,
   insertinvalidatedToken,

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de"></html>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -16,45 +16,42 @@
           /></a>
         </div>
         <div class="user-info" id="userNameContainer"></div>
-        <button class="logout-button" onclick="logout()">Logout</button>
+        <button  class="button logout-button" onclick="logout()">Logout</button>
       </header>
 
       <main>
-        <!-- Active Challenges Section -->
-        <section class="dashboard-section">
-          <h2>Meine aktiven Challenges</h2>
-          <div id="active-challenges" class="active-challenges">
-            <!-- Active challenges will be populated here by JavaScript -->
-          </div>
-        </section>
+        <section class = "activ-challenges-section">
+          <h2 class="dashboard-heading">Meine aktiven Challenges</h2>
+        <div class="user-challenges">
+          
+          <div id="active-challenges" class="active-challenges"></div>
+         
+        </div>
 
-        <!-- User Statistics Section -->
-        <section class="dashboard-section stats">
+        
+        <div class="stats">
           <h3>Meine Statistik</h3>
           <p>Total absolvierte Kilometer: <span id="totalKm"></span></p>
           <p>Total absolvierte Einheiten: <span id="totalHours"></span></p>
           <p>Meine Sportklasse(n): <span id="mySportClasses"></span></p>
-          <button class="register-class">Neue Sportklasse registrieren</button>
+          <button class="button register-class">Neue Sportklasse registrieren</button>
+          <button class="button delete-class">Sportklasse löschen</button>
+        </div>
         </section>
 
-        <!-- Select Challenges Section -->
-        <section class="dashboard-section">
-          <h2>Aktive Challenges Auswählen</h2>
-          <div id="selectChallenges" class="select-challenges">
-            <!-- Selectable challenges and sport class dropdown will be populated here by JavaScript -->
-          </div>
-          <button class="submit-button" onclick="submitSelection()">
-            Challenge beitreten
-          </button>
-        </section>
+        <section class="manage-challenges-section">
+        <div class="select-challenges-section">
+          <h2>Challenges Auswählen</h2>
+          <div id="select-challenges" class="select-challenges"></div>
+      
+        </div>
 
-        <!-- Create New Challenge Section -->
-        <section class="dashboard-section">
+      
+        <div class="create-challenge-section">
           <h2>Neue Challenge erstellen</h2>
-          <div id="createChallenges" class="create-challenges">
-            <!-- New challenges will be populated here by JavaScript -->
-          </div>
-        </section>
+          <div id="create-challenges" class="create-challenges"></div>
+        </div>
+      </section>
       </main>
 
       <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>

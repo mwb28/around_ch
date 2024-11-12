@@ -17,36 +17,38 @@ const queries = require("../db/queries");
 // Zeige alle Herausforderungen an
 // Zeige alle Herausforderungen an
 const getAllActiveChallenges = async (req, res) => {
-  const sportlId = req.user ? req.user.sportl_id : null;
   try {
-    let challenges;
-    if (sportlId) {
-      challenges = await pool.query(queries.allUserChallenges, [sportlId]);
-    } else {
-      challenges = await pool.query(queries.allActiveChallenges);
-    }
+    const challenges = await pool.query(queries.allActiveChallenges);
 
     // Bildpfad für jede Challenge dynamisch hinzufügen
-    const challengesNoImage = challenges.rows.map((challenge) => {
-      // let imageUrl;
+    const challengesImage = challenges.rows.map((challenge) => {
+      const formattedName = challenge.name_der_challenge.toLowerCase();
 
-      // Logik für den Bildpfad basierend auf challengevl_id
-      // switch (challenge.challengevl_id) {
-      //   case 8:
-      //     imageUrl = "/assets/images/bielersee_small.png";
-      //     break;
-      //   case 9:
-      //     imageUrl = "/static/images/image_for_9.jpg";
-      //     break;
-      //   default:
-      //     imageUrl = "/static/images/default_image.jpg";
-      // }
-
-      // Challenge-Objekt mit imageUrl zurückgeben
-      return { ...challenge };
+      const imagePath = `../assets/images/${formattedName}.jpg`;
+      return { ...challenge, image_path: imagePath };
     });
 
-    res.status(200).json(challengesNoImage);
+    res.status(200).json(challengesImage);
+  } catch (error) {
+    console.error("Fehler beim Abrufen der Herausforderungen:", error);
+    res.status(500).json({ message: "Interner Serverfehler" });
+  }
+};
+const getAllActiveUserChallenges = async (req, res) => {
+  const { sportl_id } = req.user;
+
+  try {
+    challenges = await pool.query(queries.allUserChallenges, [sportl_id]);
+
+    // Bildpfad für jede Challenge dynamisch hinzufügen
+    const challengesImage = challenges.rows.map((challenge) => {
+      const formattedName = challenge.name_der_challenge.toLowerCase();
+
+      const imagePath = `../assets/images/${formattedName}.jpg`;
+      return { ...challenge, image_path: imagePath };
+    });
+
+    res.status(200).json(challengesImage);
   } catch (error) {
     console.error("Fehler beim Abrufen der Herausforderungen:", error);
     res.status(500).json({ message: "Interner Serverfehler" });
@@ -97,7 +99,18 @@ const getAllTemplateChallenges = async (req, res) => {
     const templateChallenges = await pool.query(
       queries.getAllTemplateChallenges
     );
-    res.status(200).json(templateChallenges.rows);
+
+    const challengeTemplateImage = templateChallenges.rows.map(
+      (challenge_vorlage) => {
+        const formattedName =
+          challenge_vorlage.name_der_challenge.toLowerCase();
+
+        const imagePath = `../assets/images/${formattedName}.jpg`;
+        return { ...challenge_vorlage, image_path: imagePath };
+      }
+    );
+
+    res.status(200).json(challengeTemplateImage);
   } catch (error) {
     console.error("Fehler beim Abrufen der Vorlagen-Herausforderungen:", error);
     res.status(500).json({ message: "Interner Serverfehler" });
@@ -273,6 +286,7 @@ const deleteChallenge = async (req, res) => {
 
 module.exports = {
   getAllActiveChallenges,
+  getAllActiveUserChallenges,
   getAllUserChallengesOfsameChallengeId,
   getSingleChallenge,
   getAllTemplateChallenges,

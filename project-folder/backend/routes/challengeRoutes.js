@@ -3,6 +3,7 @@ const router = express.Router();
 const authenticateUser = require("../middleware/authenticatUser");
 const {
   getAllActiveChallenges,
+  getAllActiveUserChallenges,
   getSingleChallenge,
   getAllUserChallengesOfsameChallengeId,
   getAllTemplateChallenges,
@@ -24,6 +25,7 @@ router.get(
 // Private Routen
 // to do...
 // Challenge erstellen
+router.get("/user", authenticateUser, getAllActiveUserChallenges);
 router.post("/create", authenticateUser, createChallenge);
 
 router.get("/archiveChallenges", authenticateUser, getAllArchiveChallenges);

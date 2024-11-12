@@ -17,14 +17,14 @@ async function loadChallenges(showAll = false) {
     challengeCardsContainer.innerHTML = "";
     const challengesToShow = showAll ? challenges : challenges.slice(0, 2);
 
-    challengesToShow.forEach(async (challenge) => {
+    challengesToShow.forEach((challenge) => {
       const challengeCard = document.createElement("div");
       challengeCard.classList.add("card");
 
       const mapContainer = document.createElement("div");
       mapContainer.classList.add("map-container");
       mapContainer.style.width = "100%";
-      mapContainer.style.height = "300px";
+      mapContainer.style.height = "200px";
       challengeCard.appendChild(mapContainer);
 
       const cardContent = document.createElement("div");
@@ -58,17 +58,24 @@ async function loadChallenges(showAll = false) {
       cardContent.appendChild(link);
 
       challengeCard.appendChild(cardContent);
+
+      // Karte zum Container hinzufügen
       challengeCardsContainer.appendChild(challengeCard);
 
-      // Initialisiere die Karte
       const switzerlandBounds = [
-        [45.818, 5.956],
-        [47.808, 10.492],
+        [45.818, 5.956], // Südwestlicher Punkt der Schweiz
+        [47.808, 10.492], // Nordöstlicher Punkt der Schweiz
       ];
-      const map = L.map(mapContainer).setView([47.1, 7.2], 6);
+
+      // Initialize Leaflet map
+      const map = L.map(mapContainer).setView(
+        [47.1, 7.2],
+
+        6 // Zoom level
+      );
       map.setMaxBounds(switzerlandBounds);
       map.fitBounds(switzerlandBounds);
-
+      // Set OpenStreetMap tiles
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution:
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -79,71 +86,28 @@ async function loadChallenges(showAll = false) {
       if (challenge.geojson_daten) {
         const geoJsonLayer = L.geoJSON(challenge.geojson_daten, {
           style: function (feature) {
-            return { color: "blue", weight: 2, opacity: 0.7 };
+            return {
+              color: "blue",
+              weight: 2,
+              opacity: 0.7, // Transparenz
+            };
           },
         }).addTo(map);
+
+        // Passe den Kartenausschnitt so an, dass die gesamte GeoJSON-Linie sichtbar ist
         map.fitBounds(geoJsonLayer.getBounds());
+        // alle Instanzen der Challenge anzeigen
+      } else {
+        console.warn(
+          `Keine GeoJSON-Daten für Challenge mit ID ${challenge.challenge_id} vorhanden.`
+        );
       }
 
-      // Teilnehmerdaten laden und anzeigen
-      const participantsResponse = await fetch(
-        `http://localhost:5000/api/v1/challenges/public/pendingInstanzes/${challenge.challenge_id}`
-      );
-      const participants = await participantsResponse.json();
-      const colors = ["red", "green", "black", "orange", "purple"];
-      const coordinates =
-        challenge.geojson_daten.features[0].geometry.coordinates;
-      const totalPoints = coordinates.length;
-      const totalLength = challenge.total_meter;
+      // Zukünftige Möglichkeit:
+      // onEachFeature könnte verwendet werden, um interaktive Elemente hinzuzufügen,
+      // wie Popups, die wichtige Sehenswürdigkeiten oder besondere Orte hervorheben.
 
-      participants.forEach((participant, index) => {
-        const color = colors[index % colors.length];
-        const distanceCovered = participant.meter_absolviert;
-        const progressDistance =
-          (distanceCovered / challenge.total_meter) * totalLength;
-        let traveledDistance = 0;
-        let newIndex = 0;
-
-        while (
-          traveledDistance < progressDistance &&
-          newIndex < totalPoints - 1
-        ) {
-          const from = turf.point(coordinates[newIndex]);
-          const to = turf.point(coordinates[newIndex + 1]);
-          const segmentDistance = turf.distance(from, to, { units: "meters" });
-          traveledDistance += segmentDistance;
-          newIndex++;
-        }
-
-        const offsetFactor = 0.0002;
-        const offsetIndex = index;
-        const offsetDirection = offsetIndex % 2 === 0 ? 1 : -1;
-        const latOffset = offsetDirection * offsetIndex * offsetFactor;
-        const lngOffset = offsetDirection * offsetIndex * offsetFactor;
-
-        for (let i = 0; i < newIndex; i++) {
-          const previousLatLng = [
-            coordinates[i][1] + latOffset,
-            coordinates[i][0] + lngOffset,
-          ];
-          const newLatLng = [
-            coordinates[i + 1][1] + latOffset,
-            coordinates[i + 1][0] + lngOffset,
-          ];
-          L.polyline([previousLatLng, newLatLng], { color: color }).addTo(map);
-        }
-
-        const newPoint = coordinates[newIndex];
-        L.marker([newPoint[1] + latOffset, newPoint[0] + lngOffset], {
-          icon: L.divIcon({
-            className: "custom-marker",
-            html: `<div style="background-color: ${color}; width: 14px; height: 14px; border-radius: 50%;"></div>
-                    <span style="margin-left: 12px; font-size: 18px; font-weight: bold; color: ${color};">${
-              participant.sportklasse || "Unbekannt"
-            }</span>`,
-          }),
-        }).addTo(map);
-      });
+      // Optional: Karten nur rendern, wenn sie im Viewport sind
     });
   } catch (error) {
     console.error("Fehler beim Laden der Challenges:", error);
@@ -153,5 +117,5 @@ async function loadChallenges(showAll = false) {
 document
   .querySelector(".all-challenges-button")
   .addEventListener("click", () => {
-    loadChallenges(true);
+    loadChallenges(true); // Zeigt alle Challenges an
   });
