@@ -58,8 +58,8 @@ const loginUser = async (req, res) => {
       secure: process.env.NODE_ENV === "production",
       maxAge: 3600000,
     });
-
-    res.status(200).json({ message: "Login erfolgreich" });
+    const username = `${userData.vorname} ${userData.nachname}`;
+    res.status(200).json({ message: "Login erfolgreich", username: username });
   } catch (error) {
     console.error("Fehler beim Einloggen:", error.message);
     res.status(500).json({ message: "Interner Serverfehler" });

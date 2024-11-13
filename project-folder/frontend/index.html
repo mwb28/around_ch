@@ -11,17 +11,22 @@
     <div class="container">
       <header>
         <div class="logo-container">
-          <a href="index.html"
-            ><img src="./assets/images/logo_small.png" alt="Logo" class="logo"
-          /></a>
+          <a href="../index.html">
+            <img
+              src="../assets/images/logo_small.png"
+              alt="Logo"
+              class="logo"
+            />
+          </a>
         </div>
         <a
           href="./views/login.html"
           class="login-button"
+          id="loginButton"
           style="text-decoration: none"
           >Einloggen</a
         >
-        <!-- muss noch unter javascript zu verfügung gestellt werden... login/logout... -->
+        <span id="usernameDisplay" style="margin-left: 10px"></span>
       </header>
 
       <main>
@@ -62,6 +67,11 @@
             <button class="all-challenges-button">
               Alle aktiven Challenges
             </button>
+            <div class="buttons">
+              <a href="#" id="dashboardButton" class="dashboard-button"
+                >Zum Dashboard</a
+              >
+            </div>
           </div>
         </section>
       </main>
@@ -69,6 +79,7 @@
       <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@turf/turf@7.1.0/turf.min.js"></script>
       <script src="js/challenges.js"></script>
+      <script src="js/auth.js"></script>
     </div>
   </body>
 </html>

@@ -32,10 +32,6 @@ router.get("/archiveChallenges", authenticateUser, getAllArchiveChallenges);
 //delete route
 router.delete("/:challenge_id/delete", authenticateUser, deleteChallenge);
 // update route
-router.post(
-  "/:challenge_id/addActivity",
-  authenticateUser,
-  addActivityToChallengeInstance
-);
+router.post("/addActivity", authenticateUser, addActivityToChallengeInstance);
 
 module.exports = router;

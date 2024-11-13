@@ -15,28 +15,29 @@
             ><img src="../assets/images/logo_small.png" alt="Logo" class="logo"
           /></a>
         </div>
-        <div class="user-info" id="userNameContainer"></div>
-        <button  class="button logout-button" onclick="logout()">Logout</button>
+        <a href="./views/login.html" class="login-button" id="loginButton" style="text-decoration: none">Einloggen</a>
+        <span id="usernameDisplay" style="margin-left: 10px"></span>
       </header>
 
       <main>
-        <section class = "activ-challenges-section">
-          <h2 class="dashboard-heading">Meine aktiven Challenges</h2>
-        <div class="user-challenges">
-          
-          <div id="active-challenges" class="active-challenges"></div>
+        <section class = "active-stats-challenges-section"> 
+          <div class = "all-active-challenges">
+            <h2>Meine aktiven Challenges</h2>
          
-        </div>
-
-        
+          <div id="active-challenges" class="active-challenges"></div>
+          </div>
+         
         <div class="stats">
-          <h3>Meine Statistik</h3>
+          <h2>Meine Statistik</h2>
+          <div class=" stats-details">
           <p>Total absolvierte Kilometer: <span id="totalKm"></span></p>
           <p>Total absolvierte Einheiten: <span id="totalHours"></span></p>
           <p>Meine Sportklasse(n): <span id="mySportClasses"></span></p>
+          <div class=" button-container">
           <button class="button register-class">Neue Sportklasse registrieren</button>
-          <button class="button delete-class">Sportklasse löschen</button>
+          <button class="button delete-class">Sportklasse löschen</button></div>
         </div>
+          </div>
         </section>
 
         <section class="manage-challenges-section">
@@ -56,6 +57,8 @@
 
       <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
       <script src="../js/dashboard.js"></script>
+      <script src="../js/auth.js"></script>
+     
     </div>
   </body>
 </html>

@@ -50,7 +50,8 @@ h2 {
 }
 
 .login-card,
-.changepw-card {
+.changepw-card,
+.activity-card {
   display: grid;
   background-color: #ffffff;
   border-radius: 15px;
@@ -89,7 +90,6 @@ h2 {
   border-radius: 5px;
   cursor: pointer;
   font-size: 1em;
-  font-weight: bold;
   transition: background-color 0.3s;
   text-align: center;
 }
@@ -97,7 +97,8 @@ h2 {
 .login-button,
 .logout-button,
 .register-class,
-.submit-button {
+.submit-button,
+.delete-class {
   background-color: #ffffff;
   color: #000000;
   border: 1px solid #000000;
@@ -117,10 +118,6 @@ h2 {
   color: #4a90e2;
   text-decoration: none;
   transition: color 0.3s ease;
-}
-
-.login-links a:hover {
-  color: #357ab7;
 }
 
 .intro {
@@ -236,32 +233,21 @@ h2 {
   display: flex;
   justify-content: space-between;
   gap: 2em;
-  margin-top: 2em;
-}
-.back-button {
-  background-color: #d6eae1;
-  color: #000;
-  border: 2px solid #000;
-  padding: 1em 2em;
-  border-radius: 5px;
-  cursor: pointer;
 }
 
 .all-challenges-button,
-.activate-challenges-button {
+.activate-challenges-button,
+.dashboard-button,
+.back-button {
   background-color: #ffffff;
   color: #000000;
   border: 2px solid #000000;
-  padding: 1em 2em;
+  padding: 1em;
   cursor: pointer;
   border-radius: 5px;
-  transition: background-color 0.3s;
+  text-decoration: none;
 }
 
-.all-challenges-button:hover,
-.back-button:hover {
-  background-color: #d6eae1;
-}
 .challenge-table {
   width: 100%;
   border-collapse: collapse;
@@ -284,19 +270,17 @@ h2 {
   background-color: #d6eae1;
 } */
 
-.dashboard-heading {
-  width: 100%;
-}
 .dashboard-card {
-  background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  text-align: left;
   display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  margin-bottom: 2em;
+  align-items: center;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 1em;
+  margin-bottom: 1em;
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
 
 .dashboard-section {
@@ -315,7 +299,7 @@ h2 {
   object-fit: cover;
 }
 
-.activ-challenges-section {
+.active-stats-challenges-section {
   padding: 1em;
   background-color: #d6eae1;
   display: flex;
@@ -324,13 +308,29 @@ h2 {
   flex-wrap: wrap;
   align-items: flex-start;
 }
+.all-active-challenges {
+  padding: 1em;
+  flex: 2;
+}
 
 .user-challenges {
   flex: 2;
+  padding: 1em;
 }
 .stats {
   flex: 1;
-  padding-left: 1em;
+  padding: 1em;
+}
+.stats-details {
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-content: stretch;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 .dashboard-section .card-content {
   flex-basis: 20%;
@@ -359,7 +359,7 @@ h2 {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-weight: bold;
+
   transition: background-color 0.3s;
 }
 
@@ -389,7 +389,7 @@ h2 {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 1em;
   margin-bottom: 1em;
-  flex-wrap: wrap;
+
   justify-content: space-between;
 }
 
@@ -426,10 +426,6 @@ h2 {
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
-}
-
-.participate-button:hover {
-  background-color: #1765c3;
 }
 
 /* Challenge-Erstellungsformular Style*/
@@ -506,8 +502,9 @@ h2 {
   max-width: 200px;
 }
 
-@media (max-width: 768px) {
-  .activ-challenges-section {
+@media (max-width: 870px) {
+  .active-stats-challenges-section,
+  .manage-challenges-section {
     flex-direction: column;
     align-items: center;
     display: block;
@@ -515,7 +512,6 @@ h2 {
   }
 
   .dashboard-card {
-    flex-direction: column;
     align-items: center;
     padding: 1em;
     width: 100%;
@@ -555,14 +551,13 @@ h2 {
     font-size: 1em;
   }
   .stats {
-    width: 100%;
     padding-top: 1em;
     padding-top: 1em;
   }
 
   .select-challenges-section {
     padding: 1em;
-    display: flex;
+
     flex-direction: column;
     align-items: center;
   }

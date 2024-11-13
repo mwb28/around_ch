@@ -64,8 +64,11 @@ const getAllTemplateChallenges = `SELECT
     challenge_vorlage.total_meter
     FROM challenge_vorlage`;
 const allUserChallenges = `SELECT 
+    c.challenge_id,
     cv.name_der_challenge,
-    STRING_AGG(DISTINCT sk_own.name, ', ') AS eigene_sportklassen,
+    kci.instanz_id,
+    kci.meter_absolviert,
+    sk_own.name AS eigene_sportklasse,
     STRING_AGG(DISTINCT sk_other.name, ', ') AS andere_sportklassen,
     c.startzeitpunkt,
     c.endzeitpunkt,
@@ -79,15 +82,17 @@ JOIN
 LEFT JOIN 
     sportklasse sk_own ON kci.sportkl_id = sk_own.sportkl_id AND sk_own.sportl_id = $1
 LEFT JOIN 
-    sportklasse sk_other ON kci.sportkl_id = sk_other.sportkl_id AND sk_other.sportl_id <> $1
+    klassen_challenge_instanz kci_other ON kci_other.challenge_id = c.challenge_id AND kci_other.instanz_id <> kci.instanz_id
+LEFT JOIN 
+    sportklasse sk_other ON kci_other.sportkl_id = sk_other.sportkl_id AND sk_other.sportl_id <>$1
 WHERE 
     c.abgeschlossen = false
     AND c.sportl_id = $1
     AND kci.status = 'in_progress'
 GROUP BY 
-    cv.name_der_challenge, c.startzeitpunkt, c.endzeitpunkt, cv.total_meter
+    c.challenge_id, cv.name_der_challenge, kci.instanz_id, kci.meter_absolviert, sk_own.name, c.startzeitpunkt, c.endzeitpunkt, cv.total_meter
 HAVING 
-    STRING_AGG(DISTINCT sk_own.name, ', ') IS NOT NULL
+    sk_own.name IS NOT NULL
 ORDER BY 
     c.startzeitpunkt;
 `;
@@ -102,12 +107,12 @@ const challengeQuery =
   "SECLET endzeitpunkt, abgeschlossen FORM challenge WHERE challenge_id = $1";
 //Akitivitäten
 const addActivity = `INSERT INTO sportlicheleistung 
-      (meter, uhrzeit, datum, dauer, anzahl_m, anzahl_w, anzahl_d, challenge_id) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)RETURNING `;
+      (meter, uhrzeit, datum, dauer, anzahl_m, anzahl_w, anzahl_d, instanz_id) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)RETURNING *`;
 // const addChallengeEnemy =
 //   "INSERT INTO nimmtteilan (sportkl_id, challenge_id, gegner_sportkl_id) VALUES ($1, $2, $3)";
 const updateChallengeInstance =
-  "UPDATE challenge_instance SET meters_absolviert = meter_absolviert + $1 WHERE instanz_id = $2";
+  "UPDATE klassen_challenge_instanz SET meter_absolviert = meter_absolviert + $1 WHERE instanz_id = $2";
 const getAllArchiveChallenges = `SELECT * FROM challenge WHERE abgeschossen = true AND sportl_id = $1`;
 const deleteChallenge = "DELETE FROM challenge WHERE challenge_id = $1";
 

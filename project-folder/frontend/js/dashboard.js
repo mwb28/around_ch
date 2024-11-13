@@ -1,23 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
-  loadUserName();
   loadActiveChallenges();
   loadStatistics();
   loadSelectableChallenges();
   loadCreateChallenge();
 });
-
-async function loadUserName() {
-  try {
-    const response = await fetch("http://localhost:5000/api/v1/users/current");
-    if (!response.ok) throw new Error("Fehler beim Laden des Benutzernamens");
-    const user = await response.json();
-    document.getElementById(
-      "userNameContainer"
-    ).textContent = `Angemeldet als: ${user.name}`;
-  } catch (error) {
-    console.error("Fehler beim Laden des Benutzernamens:", error);
-  }
-}
 
 async function loadActiveChallenges() {
   try {
@@ -49,9 +35,6 @@ async function loadActiveChallenges() {
       const title = document.createElement("h3");
       title.textContent = challenge.name_der_challenge;
 
-      const description1 = document.createElement("p");
-      description1.textContent = challenge.description;
-
       const description2 = document.createElement("p");
       description2.textContent =
         "Startzeitpunkt: " +
@@ -67,17 +50,21 @@ async function loadActiveChallenges() {
 
       const description5 = document.createElement("p");
       description5.textContent =
-        "Eigene Sportklasse(n): " + challenge.eigene_sportklassen;
+        "Eigene Sportklasse: " + challenge.eigene_sportklasse;
+
+      const description6 = document.createElement("p");
+      description6.textContent =
+        "Gemachte Meter: " + challenge.meter_absolviert;
 
       // const description6 = document.createElement("p");
       // description6.textContent =
       //   "Andere Sportklasse(n): " + challenge.andere_sportklassen;
       // Einzel Challenge Link
-      const link = document.createElement("a");
-      link.href =
-        "./views/einzel-challenge.html?challengeId=" + challenge.challenge_id;
-      link.textContent = "Einzel Challenge";
-      link.classList.add("challenge-link");
+      // const link = document.createElement("a");
+      // link.href =
+      //   "./views/einzel-challenge.html?challengeId=" + challenge.challenge_id;
+      // link.textContent = "Einzel Challenge";
+      // link.classList.add("challenge-link");
 
       // Button-Container erstellen und Buttons hinzufügen
       const buttonContainer = document.createElement("div");
@@ -86,13 +73,18 @@ async function loadActiveChallenges() {
       const showMapButton = document.createElement("button");
       showMapButton.textContent = "Karte anzeigen";
       showMapButton.classList.add("show-map");
-      showMapButton.onclick = () => window.open("./map.html", "_blank");
+      showMapButton.onclick = () =>
+        window.open(
+          `./einzel-challenge.html?challengeId=${challenge.challenge_id}`
+        );
 
       const addActivityButton = document.createElement("button");
       addActivityButton.textContent = "Aktivität hinzufügen";
       addActivityButton.classList.add("add-activity");
       addActivityButton.onclick = () =>
-        window.open("./activity.html", "_blank");
+        window.open(
+          `./aktivitaet-input.html?instanceId=${challenge.instanz_id}`
+        );
 
       // Buttons dem Button-Container hinzufügen
       buttonContainer.appendChild(showMapButton);
@@ -100,13 +92,13 @@ async function loadActiveChallenges() {
 
       // Alle Elemente zum cardContent hinzufügen
       cardContent.appendChild(title);
-      cardContent.appendChild(description1);
+      // cardContent.appendChild(description1);
       cardContent.appendChild(description2);
       cardContent.appendChild(description3);
       // cardContent.appendChild(description4);
       cardContent.appendChild(description5);
-      // cardContent.appendChild(description6);
-      cardContent.appendChild(link);
+      cardContent.appendChild(description6);
+      // cardContent.appendChild(link);
 
       // Alle Teile zur Challenge-Karte hinzufügen
       challengeCard.appendChild(mapImage);
@@ -140,7 +132,7 @@ async function loadStatistics() {
 async function loadSelectableChallenges() {
   try {
     const response = await fetch(
-      "http://localhost:5000/api/v1/challenges/templates"
+      "http://localhost:5000/api/v1/challenges/public"
     );
     if (!response.ok)
       throw new Error("Fehler beim Laden der auswählbaren Challenges");
@@ -369,19 +361,4 @@ function joinChallenge(challengeId, selectedClass) {
   console.log(
     `Teilnahme an Challenge mit ID ${challengeId} für Klasse ${selectedClass}`
   );
-}
-
-function logout() {
-  fetch("http://localhost:5000/api/v1/auth/logout", {
-    method: "POST",
-    credentials: "include",
-  })
-    .then((response) => {
-      if (response.ok) {
-        window.location.href = "/index.html";
-      }
-    })
-    .catch((error) => {
-      console.error("Fehler beim Logout:", error);
-    });
 }
