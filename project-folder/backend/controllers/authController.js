@@ -48,7 +48,7 @@ const loginUser = async (req, res) => {
 
     // JWT-Token generieren, um den Benutzer zu authentifizieren
     const token = jwt.sign({ id: userData.sportl_id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
+      expiresIn: "7d",
     });
     //console.log("Generated authToken:", token);
 

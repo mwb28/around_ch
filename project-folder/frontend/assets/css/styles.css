@@ -100,7 +100,8 @@ h2 {
 .submit-button,
 .delete-class,
 .dashboard-button,
-.back-button {
+.back-button,
+.all-challenges-button {
   background-color: #ffffff;
   color: #000000;
   border: 1px solid #000000;
@@ -238,7 +239,6 @@ h2 {
   gap: 2em;
 }
 
-.all-challenges-button,
 .activate-challenges-button {
   background-color: #ffffff;
   color: #000000;
@@ -545,6 +545,16 @@ h2 {
     overflow-wrap: break-word;
     box-sizing: border-box;
   }
+  .card-content {
+    padding: 1em;
+    box-sizing: border-box;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+  }
+  .buttons {
+    gap: 1em;
+    box-sizing: border-box;
+  }
   /* .challenge-table {
     display: block;
     overflow-x: auto;
@@ -621,5 +631,33 @@ h2 {
     display: block;
     overflow-x: auto;
     white-space: nowrap;
+  }
+  .login-card {
+    width: 100%;
+
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
+  .login-card .input-group input {
+    font-size: 14px;
+    padding: 8px;
+    box-sizing: border-box;
+  }
+
+  .login-links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .login-links a {
+    margin-top: 5px;
+  }
+  .buttons {
+    gap: 1em;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
   }
 }

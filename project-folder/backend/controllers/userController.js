@@ -64,7 +64,7 @@ const getAllSportClasses = async (req, res) => {
 const userStatistics = async (req, res) => {
   const { sportl_id } = req.user;
   try {
-    const userStats = await pool.query(queries.userStatistics, [sportl_id]);
+    const userStats = await pool.query(queries.getUserStatistics, [sportl_id]);
     res.status(200).json(userStats.rows);
   } catch (error) {
     console.error("Fehler beim Abrufen der Benutzerstatistiken:", error);

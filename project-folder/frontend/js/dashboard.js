@@ -127,11 +127,20 @@ async function loadStatistics() {
       "http://localhost:5000/api/v1/users/statistics"
     );
     if (!response.ok) throw new Error("Fehler beim Laden der Statistik");
-    const stats = await response.json();
-    document.getElementById("totalKm").textContent = stats.totalKm;
-    document.getElementById("totalHours").textContent = stats.totalHours;
-    document.getElementById("mySportClasses").textContent =
-      stats.sportClasses.join(", ");
+    const statsArray = await response.json();
+    const stats = statsArray[0];
+    const totalKilometer = (parseInt(stats.totalmeter, 10) / 1000).toFixed(3);
+    const totalMinuten = parseInt(stats.totaldauer, 10);
+    const stunden = Math.floor(totalMinuten / 60);
+    const minuten = totalMinuten % 60;
+    document.getElementById("totalKm").textContent = `${totalKilometer} km`;
+    document.getElementById(
+      "totalHours"
+    ).textContent = `${stunden} h ${minuten} min`;
+    console.log("Total Meter: ", stats.totalmeter);
+    console.log("Total Minuten: ", stats.totaldauer);
+    // document.getElementById("mySportClasses").textContent =
+    //   stats.sportClasses.join(", ");
   } catch (error) {
     console.error("Fehler beim Laden der Statistik:", error);
   }

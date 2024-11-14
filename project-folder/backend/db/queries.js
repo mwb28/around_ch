@@ -115,12 +115,12 @@ const updateChallengeInstance =
 const getAllArchiveChallenges = `SELECT * FROM challenge WHERE abgeschossen = true AND sportl_id = $1`;
 const deleteChallenge = "DELETE FROM challenge WHERE challenge_id = $1";
 const getUserStatistics = `SELECT
-SUM sl.meter as gesamt_meter,
-SUM sl.dauer as gesamt_dauer,
+    SUM(sl.meter) AS totalmeter,
+    SUM(sl.dauer) AS totaldauer
 FROM sportlicheleistung sl
 JOIN klassen_challenge_instanz kci ON sl.instanz_id = kci.instanz_id
 JOIN sportklasse sk ON kci.sportkl_id = sk.sportkl_id
-WHERE sk.sportl_id = $1;`;
+WHERE sk.sportl_id = $1`;
 
 module.exports = {
   registerUser,
