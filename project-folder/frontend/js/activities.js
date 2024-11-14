@@ -9,8 +9,38 @@ async function submitActivity() {
     return;
   }
 
+  const anzahlM = parseInt(form.male_count.value, 10) || 0;
+  const anzahlW = parseInt(form.female_count.value, 10) || 0;
+  const anzahlD = parseInt(form.diverse_count.value, 10) || 0;
+
+  const anzahlTeilnehmer = anzahlM + anzahlW + anzahlD;
+
+  if (anzahlTeilnehmer < 1) {
+    alert("Bitte geben Sie mindestens eine Person an.");
+    return;
+  }
+  if (!form.date.value) {
+    alert("Bitte geben Sie ein Datum an.");
+    return;
+  }
+  if (!form.time.value) {
+    alert("Bitte geben Sie eine Uhrzeit an.");
+    return;
+  }
+  if (!form.duration.value) {
+    alert("Bitte geben Sie eine Dauer an.");
+    return;
+  }
+  const anzahlMeter = parseInt(form.meter.value, 10) || 0;
+  if (anzahlMeter < 1) {
+    alert("Bitte geben Sie die Anzahl der Meter an.");
+    return;
+  }
+
+  const averageMeter = Math.floor(anzahlMeter / anzahlTeilnehmer);
+
   const data = {
-    meter: form.meter.value,
+    meter: averageMeter,
     uhrzeit: form.time.value,
     datum: form.date.value,
     dauer: form.duration.value,

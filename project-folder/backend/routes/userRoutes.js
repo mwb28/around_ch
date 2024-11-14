@@ -11,6 +11,7 @@ const {
   userInfo,
   checkUserStatus,
   getAllSportClasses,
+  userStatistics,
 } = require("../controllers/userController");
 
 router.get("/authcheck", authenticateUser, checkUserStatus);
@@ -19,5 +20,6 @@ router.get("/current", authenticateUser, userInfo);
 router.get("/sportclasses", authenticateUser, getAllSportClasses);
 // Registriere eine neue Sportklasse
 router.route("/registerSportclass").post(authenticateUser, registerSportklasse);
+router.get("/statistics", authenticateUser, userStatistics);
 
 module.exports = router;

@@ -20,15 +20,17 @@ const getSportklasseId =
   "SELECT sportkl_id FROM sportklasse WHERE sportkl_id = $1";
 //Heruasforderungen
 const allActiveChallenges = `SELECT 
-  challenge.challenge_id,
-  challenge.startzeitpunkt,
-  challenge.endzeitpunkt,
-  challenge_vorlage.challengevl_id,
-  challenge_vorlage.name_der_challenge, 
-challenge_vorlage.total_meter,challenge_vorlage.geojson_daten 
-  FROM challenge JOIN challenge_vorlage 
-  ON challenge.challengevl_id = challenge_vorlage.challengevl_id 
-  WHERE challenge.abgeschlossen = false`;
+  c.challenge_id,
+  c.startzeitpunkt,
+  c.endzeitpunkt,
+  cv.challengevl_id,
+  cv.name_der_challenge, 
+  cv.total_meter,
+  cv.geojson_daten 
+FROM challenge c
+JOIN challenge_vorlage cv 
+  ON c.challengevl_id = cv.challengevl_id 
+WHERE c.abgeschlossen = false`;
 const getAllUserChallengesOfsameChallengeId = ` SELECT 
 kci.instanz_id, 
 kci.meter_absolviert, 
@@ -69,7 +71,13 @@ const allUserChallenges = `SELECT
     kci.instanz_id,
     kci.meter_absolviert,
     sk_own.name AS eigene_sportklasse,
-    STRING_AGG(DISTINCT sk_other.name, ', ') AS andere_sportklassen,
+    (
+        SELECT STRING_AGG(DISTINCT sk_other.name, ', ')
+        FROM klassen_challenge_instanz kci_other
+        JOIN sportklasse sk_other ON kci_other.sportkl_id = sk_other.sportkl_id
+        WHERE kci_other.challenge_id = c.challenge_id
+          AND sk_other.sportl_id <> $1
+    ) AS andere_sportklassen,
     c.startzeitpunkt,
     c.endzeitpunkt,
     cv.total_meter
@@ -78,23 +86,14 @@ FROM
 JOIN 
     challenge_vorlage cv ON c.challengevl_id = cv.challengevl_id
 JOIN 
-    klassen_challenge_instanz kci ON kci.challenge_id = c.challenge_id
-LEFT JOIN 
+    klassen_challenge_instanz kci ON kci.challenge_id = c.challenge_id AND kci.status = 'in_progress'
+JOIN 
     sportklasse sk_own ON kci.sportkl_id = sk_own.sportkl_id AND sk_own.sportl_id = $1
-LEFT JOIN 
-    klassen_challenge_instanz kci_other ON kci_other.challenge_id = c.challenge_id AND kci_other.instanz_id <> kci.instanz_id
-LEFT JOIN 
-    sportklasse sk_other ON kci_other.sportkl_id = sk_other.sportkl_id AND sk_other.sportl_id <>$1
 WHERE 
     c.abgeschlossen = false
     AND c.sportl_id = $1
-    AND kci.status = 'in_progress'
-GROUP BY 
-    c.challenge_id, cv.name_der_challenge, kci.instanz_id, kci.meter_absolviert, sk_own.name, c.startzeitpunkt, c.endzeitpunkt, cv.total_meter
-HAVING 
-    sk_own.name IS NOT NULL
 ORDER BY 
-    c.startzeitpunkt;
+    eigene_sportklasse
 `;
 const createChallenge = `INSERT INTO challenge 
   (startzeitpunkt, endzeitpunkt, abgeschlossen, challengevl_id, sportl_id) 
@@ -115,6 +114,13 @@ const updateChallengeInstance =
   "UPDATE klassen_challenge_instanz SET meter_absolviert = meter_absolviert + $1 WHERE instanz_id = $2";
 const getAllArchiveChallenges = `SELECT * FROM challenge WHERE abgeschossen = true AND sportl_id = $1`;
 const deleteChallenge = "DELETE FROM challenge WHERE challenge_id = $1";
+const getUserStatistics = `SELECT
+SUM sl.meter as gesamt_meter,
+SUM sl.dauer as gesamt_dauer,
+FROM sportlicheleistung sl
+JOIN klassen_challenge_instanz kci ON sl.instanz_id = kci.instanz_id
+JOIN sportklasse sk ON kci.sportkl_id = sk.sportkl_id
+WHERE sk.sportl_id = $1;`;
 
 module.exports = {
   registerUser,
@@ -139,4 +145,5 @@ module.exports = {
   deleteChallenge,
   createInstanceOfChallenge,
   challengeQuery,
+  getUserStatistics,
 };

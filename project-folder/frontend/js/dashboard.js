@@ -33,7 +33,12 @@ async function loadActiveChallenges() {
       cardContent.classList.add("dashboard-card-content");
 
       const title = document.createElement("h3");
-      title.textContent = challenge.name_der_challenge;
+      title.textContent =
+        challenge.name_der_challenge + " Nr: " + challenge.challenge_id;
+
+      const description1 = document.createElement("p");
+      description1.textContent =
+        "Mit der Sportklasse: " + challenge.eigene_sportklasse;
 
       const description2 = document.createElement("p");
       description2.textContent =
@@ -50,11 +55,13 @@ async function loadActiveChallenges() {
 
       const description5 = document.createElement("p");
       description5.textContent =
-        "Eigene Sportklasse: " + challenge.eigene_sportklasse;
+        "Absolviert: " + challenge.meter_absolviert + " Meter";
 
       const description6 = document.createElement("p");
       description6.textContent =
-        "Gemachte Meter: " + challenge.meter_absolviert;
+        "Bis ins Ziel: " +
+        (challenge.total_meter - challenge.meter_absolviert) +
+        " Meter";
 
       // const description6 = document.createElement("p");
       // description6.textContent =
@@ -92,12 +99,13 @@ async function loadActiveChallenges() {
 
       // Alle Elemente zum cardContent hinzufügen
       cardContent.appendChild(title);
-      // cardContent.appendChild(description1);
+      cardContent.appendChild(description1);
       cardContent.appendChild(description2);
       cardContent.appendChild(description3);
       // cardContent.appendChild(description4);
       cardContent.appendChild(description5);
       cardContent.appendChild(description6);
+
       // cardContent.appendChild(link);
 
       // Alle Teile zur Challenge-Karte hinzufügen

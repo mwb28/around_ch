@@ -178,7 +178,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
   if (dashboardButton) {
     if (isLoggedIn) {
-      dashboardButton.href = "./views/dashboard.html";
+      dashboardButton.href = "../views/dashboard.html";
     } else {
       dashboardButton.href = "#";
       dashboardButton.onclick = () => {
