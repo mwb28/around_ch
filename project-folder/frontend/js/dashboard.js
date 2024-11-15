@@ -414,9 +414,9 @@ async function createChallenge(
   const endDateTime = `${endDate}T${endTime}`;
 
   const challengeData = {
-    template_id: templateId,
     startzeitpunkt: new Date(startDateTime).toISOString(),
     endzeitpunkt: new Date(endDateTime).toISOString(),
+    challengevl_id: templateId,
     sportkl_id: selectedClass,
   };
 
@@ -435,6 +435,8 @@ async function createChallenge(
     if (!response.ok) throw new Error("Fehler beim Erstellen der Challenge");
 
     alert("Challenge erfolgreich erstellt!");
+    await loadActiveChallenges();
+    await loadSelectableChallenges();
   } catch (error) {
     console.error("Fehler beim Erstellen der Challenge:", error);
   }

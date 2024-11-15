@@ -79,9 +79,10 @@ const getSingleChallenge = `  SELECT
   WHERE 
     c.challenge_id = $1`;
 const getAllTemplateChallenges = `SELECT 
-    challenge_vorlage.name_der_challenge,
-    challenge_vorlage.total_meter
-    FROM challenge_vorlage`;
+    cv.challengevl_id,    
+    cv.name_der_challenge,
+    cv.total_meter
+    FROM challenge_vorlage cv`;
 const allUserChallenges = `SELECT 
     c.challenge_id,
     cv.name_der_challenge,

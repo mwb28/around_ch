@@ -120,6 +120,7 @@ const createChallenge = async (req, res) => {
   const { startzeitpunkt, endzeitpunkt, challengevl_id, sportkl_id } = req.body;
   const { sportl_id } = req.user;
   const abgeschlossen = false;
+
   if (endzeitpunkt && new Date(endzeitpunkt) <= new Date(startzeitpunkt)) {
     return res
       .status(400)
@@ -127,7 +128,7 @@ const createChallenge = async (req, res) => {
   }
   try {
     await pool.query("BEGIN");
-    // Überprüft ob die angegebene Sportklasse existiert
+    // Überprüfen ob die angegebene Sportklasse existiert
     if (sportkl_id) {
       const klasseExistiert = await pool.query(queries.getSportklasseId, [
         sportkl_id,
@@ -144,7 +145,7 @@ const createChallenge = async (req, res) => {
     const newChallenge = await pool.query(queries.createChallenge, [
       startzeitpunkt,
       endzeitpunkt,
-      abgeschlossen,
+      abgeschlossen || false,
       challengevl_id,
       sportl_id,
     ]);
