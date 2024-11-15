@@ -34,12 +34,11 @@ async function loadActiveChallenges() {
       cardContent.classList.add("dashboard-card-content");
 
       const title = document.createElement("h3");
-      title.textContent =
-        challenge.name_der_challenge + " Nr: " + challenge.challenge_id;
+      title.textContent = "Sportklasse: " + challenge.eigene_sportklasse;
 
       const description1 = document.createElement("p");
       description1.textContent =
-        "Mit der Sportklasse: " + challenge.eigene_sportklasse;
+        challenge.name_der_challenge + " Nr: " + challenge.challenge_id;
 
       const description2 = document.createElement("p");
       description2.textContent =
@@ -212,7 +211,8 @@ async function loadSelectableChallenges() {
       cardContent.classList.add("challenge-card-content-selectable");
 
       const description1 = document.createElement("h3");
-      description1.textContent = challenge.name_der_challenge;
+      description1.textContent =
+        challenge.name_der_challenge + " Nr: " + challenge.challenge_id;
       cardContent.appendChild(description1);
 
       const description2 = document.createElement("p");
@@ -248,7 +248,7 @@ async function loadSelectableChallenges() {
       participateButton.textContent = "Teilnehmen";
       participateButton.classList.add("participate-button");
       participateButton.onclick = () =>
-        joinChallenge(challenge.id, classDropdown.value);
+        joinChallenge(challenge.challenge_id, classDropdown.value);
 
       cardContent.appendChild(participateButton);
 
@@ -268,21 +268,23 @@ async function joinChallenge(challengeId, classId) {
 
   try {
     const response = await fetch(
-      "http://localhost:5000/api/v1/challenges/join",
+      "http://localhost:5000/api/v1/challenges/createInstance",
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          challengeId: challengeId,
-          classId: classId,
+          challenge_id: challengeId,
+          sportkl_id: classId,
         }),
       }
     );
 
     if (response.ok) {
       alert("Erfolgreich zur Challenge angemeldet!");
+    } else if (response.status === 409) {
+      alert("Diese Sportklasse nimmt bereits an dieser Challenge teil.");
     } else {
       const errorData = await response.json();
       alert(
@@ -438,8 +440,8 @@ async function createChallenge(
   }
 }
 
-function joinChallenge(challengeId, selectedClass) {
-  console.log(
-    `Teilnahme an Challenge mit ID ${challengeId} für Klasse ${selectedClass}`
-  );
-}
+// function joinChallenge(challengeId, selectedClass) {
+//   console.log(
+//     `Teilnahme an Challenge mit ID ${challengeId} für Klasse ${selectedClass}`
+//   );
+// }
