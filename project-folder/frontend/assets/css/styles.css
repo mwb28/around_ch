@@ -51,7 +51,8 @@ h2 {
 
 .login-card,
 .changepw-card,
-.activity-card {
+.activity-card,
+.class-registration-card {
   display: grid;
   background-color: #ffffff;
   border-radius: 15px;
@@ -333,6 +334,10 @@ h2 {
   padding: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
+.all-sportclasses {
+  padding-bottom: 1em;
+}
+
 .dashboard-section .card-content {
   flex-basis: 20%;
   padding: 1em;

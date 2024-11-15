@@ -39,7 +39,7 @@ async function loadChallengeDetail() {
       "<p>Fehler beim Laden der Challenge-Daten.</p>";
   }
 }
-
+// Tabelle mit Teilnehmerdaten rendern
 function renderChallengeDetail(participants) {
   const challengeDetails = document.querySelector(".challenge-details");
   challengeDetails.innerHTML = "";

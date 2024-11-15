@@ -13,11 +13,18 @@ const getInvalidatedToken = "SELECT * FROM invalidated_tokens WHERE token = $1";
 // Userinfos
 const getUserInfo = "SELECT * FROM sportlehrperson WHERE sportl_id = $1";
 // Registeren der Sporklassen
-const registerSportklasse =
+const registerSportclass =
   "INSERT INTO sportklasse (name,jahrgang, schul_id, sportl_id) VALUES ($1, $2, $3, $4) RETURNING *";
-const allSportClasses = "SELECT * FROM sportklasse WHERE sportl_id = $1";
+const allSportClasses =
+  "SELECT sk.name FROM sportklasse sk WHERE sk.sportl_id = $1 ORDER BY sk.name";
+const checkSportclass = `SELECT * FROM sportklasse WHERE name = $1 AND schul_id = $2 AND sportl_id = $3`;
 const getSportklasseId =
   "SELECT sportkl_id FROM sportklasse WHERE sportkl_id = $1";
+const notUsedSportklasse = `SELECT *
+FROM sportklasse sk
+WHERE sk.sportkl_id NOT IN (
+    SELECT DISTINCT kci.sportkl_id
+    FROM klassen_challenge_instanz kci`;
 //Heruasforderungen
 const allActiveChallenges = `SELECT 
   c.challenge_id,
@@ -127,8 +134,9 @@ module.exports = {
   getUserByEmail,
   updatePasswordAndRemoveFlag,
   getUserInfo,
-  registerSportklasse,
+  registerSportclass,
   allSportClasses,
+  checkSportclass,
   getSportklasseId,
   getSchulIdFromSportlId,
   insertinvalidatedToken,

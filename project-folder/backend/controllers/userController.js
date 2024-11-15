@@ -33,12 +33,21 @@ const checkUserStatus = (req, res) => {
 };
 
 // Registriere eine neue Sportklasse
-const registerSportklasse = async (req, res) => {
+const registerSportclass = async (req, res) => {
   const { name, jahrgang } = req.body;
   const { sportl_id, schul_id } = req.user;
 
   try {
-    const newSportklasse = await pool.query(queries.registerSportklasse, [
+    const existingSportclass = await pool.query(queries.checkSportclass, [
+      name,
+      schul_id,
+      sportl_id,
+    ]);
+    if (existingSportclass.rows.length > 0) {
+      return res.status(400).json({ message: "Sportklasse existiert bereits" });
+    }
+
+    const newSportklasse = await pool.query(queries.registerSportclass, [
       name,
       jahrgang,
       schul_id,
@@ -54,9 +63,36 @@ const getAllSportClasses = async (req, res) => {
   const { sportl_id } = req.user;
   try {
     const sportClasses = await pool.query(queries.allSportClasses, [sportl_id]);
-    res.status(200).json(sportClasses.rows);
+    const stringFromSportClasses = sportClasses.rows.map((row) => row.name);
+    res.status(200).json(stringFromSportClasses);
   } catch (error) {
     console.error("Fehler beim Abrufen der Sportklassen:", error);
+    res.status(500).json({ message: "Interner Serverfehler" });
+  }
+};
+const getAllUnusedSportClasses = async (req, res) => {
+  const { sportl_id } = req.user;
+  try {
+    const unusedSportClasses = await pool.query(queries.notUsedSportklasse, [
+      sportl_id,
+    ]);
+    res.status(200).json(unusedSportClasses.rows);
+  } catch (error) {
+    console.error("Fehler beim Abrufen der ungenutzten Sportklassen:", error);
+    res.status(500).json({ message: "Interner Serverfehler" });
+  }
+};
+const deleteSportClasses = async (req, res) => {
+  const { sportkl_id } = req.body;
+  const { sportl_id } = req.user;
+  try {
+    const deletedClasses = await pool.query(queries.deleteSportClasses, [
+      ids,
+      sportl_id,
+    ]);
+    res.status(200).json(deletedClasses.rows);
+  } catch (error) {
+    console.error("Fehler beim Löschen der Sportklassen:", error);
     res.status(500).json({ message: "Interner Serverfehler" });
   }
 };
@@ -75,7 +111,8 @@ const userStatistics = async (req, res) => {
 module.exports = {
   userInfo,
   checkUserStatus,
-  registerSportklasse,
+  registerSportclass,
   getAllSportClasses,
+  getAllUnusedSportClasses,
   userStatistics,
 };

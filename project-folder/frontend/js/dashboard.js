@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   loadActiveChallenges();
   loadStatistics();
+  loadSportClasses();
   loadSelectableChallenges();
   loadCreateChallenge();
 });
@@ -24,7 +25,7 @@ async function loadActiveChallenges() {
 
       // Karte/Bild hinzufügen
       const mapImage = document.createElement("img");
-      mapImage.src = challenge.image_path || "../assets/images/default.jpg"; // Fallback-Bild
+      mapImage.src = challenge.image_path || "../assets/images/default.jpg";
       mapImage.alt = "Karte der Challenge";
       mapImage.classList.add("map-image");
 
@@ -143,6 +144,19 @@ async function loadStatistics() {
     //   stats.sportClasses.join(", ");
   } catch (error) {
     console.error("Fehler beim Laden der Statistik:", error);
+  }
+}
+async function loadSportClasses() {
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/v1/users/sportclasses"
+    );
+    if (!response.ok) throw new Error("Fehler beim Laden der Sportklassen");
+    const sportClasses = await response.json();
+    document.getElementById("mySportClasses").textContent =
+      sportClasses.join(", ");
+  } catch (error) {
+    console.error("Fehler beim Laden der Sportklassen:", error);
   }
 }
 
