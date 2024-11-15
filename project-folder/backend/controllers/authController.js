@@ -56,7 +56,6 @@ const loginUser = async (req, res) => {
     res.cookie("authToken", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      maxAge: 3600000,
     });
     const username = `${userData.vorname} ${userData.nachname}`;
     res.status(200).json({ message: "Login erfolgreich", username: username });

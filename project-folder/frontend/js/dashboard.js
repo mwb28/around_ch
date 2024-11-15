@@ -152,9 +152,23 @@ async function loadSportClasses() {
       "http://localhost:5000/api/v1/users/sportclasses"
     );
     if (!response.ok) throw new Error("Fehler beim Laden der Sportklassen");
+
     const sportClasses = await response.json();
-    document.getElementById("mySportClasses").textContent =
-      sportClasses.join(", ");
+    console.log("Erhaltene Sportklassen:", sportClasses);
+
+    const classListContainer = document.getElementById("mySportClasses");
+    classListContainer.innerHTML = "";
+
+    // Sportklassen als Liste der Namen einfügen
+    sportClasses.forEach((sportClass) => {
+      const listItem = document.createElement("span");
+      listItem.textContent = sportClass.name;
+      classListContainer.appendChild(listItem);
+
+      const separator = document.createElement("span");
+      separator.textContent = ", ";
+      classListContainer.appendChild(separator);
+    });
   } catch (error) {
     console.error("Fehler beim Laden der Sportklassen:", error);
   }
@@ -246,6 +260,42 @@ async function loadSelectableChallenges() {
     console.error("Fehler beim Laden der auswählbaren Challenges:", error);
   }
 }
+async function joinChallenge(challengeId, classId) {
+  if (!classId || !challengeId) {
+    alert("Bitte wähle eine gültige Klasse und Challenge aus.");
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/v1/challenges/join",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          challengeId: challengeId,
+          classId: classId,
+        }),
+      }
+    );
+
+    if (response.ok) {
+      alert("Erfolgreich zur Challenge angemeldet!");
+    } else {
+      const errorData = await response.json();
+      alert(
+        errorData.message ||
+          "Es gab ein Problem bei der Anmeldung zur Challenge."
+      );
+    }
+  } catch (error) {
+    console.error("Fehler beim Registrieren der Challenge-Teilnahme:", error);
+    alert("Ein Fehler ist aufgetreten. Bitte versuche es später erneut.");
+  }
+}
+
 async function loadCreateChallenge() {
   try {
     // Vorlagen für Challenges aus der Datenbank abrufen

@@ -1,7 +1,7 @@
 async function submitRegistration() {
   const form = document.getElementById("registrationForm");
 
-  const name = form.className.valueOf.trim();
+  const name = form.className.value.trim();
   const jahrgang = parseInt(form.classYear.value, 10);
 
   if (name === "" || isNaN(jahrgang)) {

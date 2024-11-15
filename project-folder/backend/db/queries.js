@@ -16,15 +16,21 @@ const getUserInfo = "SELECT * FROM sportlehrperson WHERE sportl_id = $1";
 const registerSportclass =
   "INSERT INTO sportklasse (name,jahrgang, schul_id, sportl_id) VALUES ($1, $2, $3, $4) RETURNING *";
 const allSportClasses =
-  "SELECT sk.name FROM sportklasse sk WHERE sk.sportl_id = $1 ORDER BY sk.name";
+  "SELECT * FROM sportklasse sk WHERE sk.sportl_id = $1 ORDER BY sk.name";
 const checkSportclass = `SELECT * FROM sportklasse WHERE name = $1 AND schul_id = $2 AND sportl_id = $3`;
 const getSportklasseId =
   "SELECT sportkl_id FROM sportklasse WHERE sportkl_id = $1";
-const notUsedSportklasse = `SELECT *
+const notUsedSportclasses = `SELECT * 
 FROM sportklasse sk
-WHERE sk.sportkl_id NOT IN (
+WHERE sk.sportl_id = $1
+AND sk.sportkl_id NOT IN (
     SELECT DISTINCT kci.sportkl_id
-    FROM klassen_challenge_instanz kci`;
+    FROM klassen_challenge_instanz kci
+    WHERE kci.sportkl_id IS NOT NULL
+)`;
+const deleteSportclasses = `
+    DELETE FROM sportklasse
+    WHERE sportkl_id = ANY($1) AND sportl_id = $2`;
 //Heruasforderungen
 const allActiveChallenges = `SELECT 
   c.challenge_id,
@@ -38,6 +44,7 @@ FROM challenge c
 JOIN challenge_vorlage cv 
   ON c.challengevl_id = cv.challengevl_id 
 WHERE c.abgeschlossen = false`;
+
 const getAllUserChallengesOfsameChallengeId = ` SELECT 
 kci.instanz_id, 
 kci.meter_absolviert, 
@@ -56,6 +63,9 @@ FROM klassen_challenge_instanz kci
     ON c.challengevl_id = cv.challengevl_id
   WHERE kci.challenge_id = $1 
     AND kci.status = 'in_progress'`;
+// Einzel Challenge anzeigen
+const challengeQuery = "SELECT * FROM challenge WHERE challenge_id = $1";
+// Einzel Challenge mit meter und geojson anzeigen
 const getSingleChallenge = `  SELECT 
     c.challenge_id,
     c.startzeitpunkt,
@@ -102,6 +112,13 @@ WHERE
 ORDER BY 
     eigene_sportklasse
 `;
+// Prueefen ob Klasse schon an Challenge teilnimmt
+const checkClassParticipation = `
+    SELECT * 
+    FROM klassen_challenge_instanz 
+    WHERE sportkl_id = $1 AND challenge_id = $2
+  `;
+
 const createChallenge = `INSERT INTO challenge 
   (startzeitpunkt, endzeitpunkt, abgeschlossen, challengevl_id, sportl_id) 
   VALUES ($1, $2, $3, $4, $5) RETURNING *`;
@@ -109,9 +126,8 @@ const createChallenge = `INSERT INTO challenge
 const createInstanceOfChallenge = `INSERT INTO klassen_challenge_instanz 
   (meter_absolviert, status, sportkl_id, challenge_id) 
   VALUES ($1, $2, $3, $4) RETURNING *`;
-const challengeQuery =
-  "SECLET endzeitpunkt, abgeschlossen FORM challenge WHERE challenge_id = $1";
-//Akitivitäten
+
+//Akitivitaeten
 const addActivity = `INSERT INTO sportlicheleistung 
       (meter, uhrzeit, datum, dauer, anzahl_m, anzahl_w, anzahl_d, instanz_id) 
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)RETURNING *`;
@@ -138,6 +154,8 @@ module.exports = {
   allSportClasses,
   checkSportclass,
   getSportklasseId,
+  notUsedSportclasses,
+  deleteSportclasses,
   getSchulIdFromSportlId,
   insertinvalidatedToken,
   getInvalidatedToken,
@@ -148,6 +166,7 @@ module.exports = {
   allUserChallenges,
   addActivity,
   createChallenge,
+  checkClassParticipation,
   updateChallengeInstance,
   getAllArchiveChallenges,
   deleteChallenge,

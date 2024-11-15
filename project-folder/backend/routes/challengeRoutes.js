@@ -1,5 +1,8 @@
 const express = require("express");
 const router = express.Router();
+const {
+  validateChallengeParticipation,
+} = require("../middleware/challengeValidation");
 const authenticateUser = require("../middleware/authenticatUser");
 const {
   getAllActiveChallenges,
@@ -9,7 +12,8 @@ const {
   getAllTemplateChallenges,
   createChallenge,
   addActivityToChallengeInstance,
-  getAllArchiveChallenges,
+  createInstanceOfChallenge,
+  //getAllArchiveChallenges,
   deleteChallenge,
 } = require("../controllers/challengeController");
 
@@ -27,8 +31,14 @@ router.get(
 // Challenge erstellen
 router.get("/user", authenticateUser, getAllActiveUserChallenges);
 router.post("/create", authenticateUser, createChallenge);
+router.post(
+  "/createInstance",
+  authenticateUser,
+  validateChallengeParticipation,
+  createInstanceOfChallenge
+);
 
-router.get("/archiveChallenges", authenticateUser, getAllArchiveChallenges);
+//router.get("/archiveChallenges", authenticateUser, getAllArchiveChallenges);
 //delete route
 router.delete("/:challenge_id/delete", authenticateUser, deleteChallenge);
 // update route

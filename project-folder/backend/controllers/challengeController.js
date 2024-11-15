@@ -40,7 +40,6 @@ const getAllActiveUserChallenges = async (req, res) => {
   try {
     challenges = await pool.query(queries.allUserChallenges, [sportl_id]);
 
-    // Bildpfad für jede Challenge dynamisch hinzufügen
     const challengesImage = challenges.rows.map((challenge) => {
       const formattedName = challenge.name_der_challenge.toLowerCase();
 
@@ -168,60 +167,25 @@ const createChallenge = async (req, res) => {
 };
 
 // Erstelle eine Instanz einer Herausforderung die bereits existiert
-const create_instance_of_challenge = async (req, res) => {
+const createInstanceOfChallenge = async (req, res) => {
   const { meter_absolviert, status, sportkl_id, challenge_id } = req.body;
 
   try {
-    await pool.query("BEGIN");
-    const challengeQuery = await pool.query(queries.challengeQuery, [
+    const result = await pool.query(queries.createInstanceOfChallenge, [
+      meter_absolviert || 0,
+      status || "in_progress",
+      sportkl_id,
       challenge_id,
     ]);
 
-    if (challengeQuery.rows.length === 0) {
-      await pool.query("ROLLBACK");
-      return res.status(404).json({ message: "Challenge nicht gefunden" });
-    }
-
-    const { endzeitpunkt, abgeschlossen } = challengeQuery.rows[0];
-
-    if (abgeschlossen) {
-      await pool.query("ROLLBACK");
-      return res
-        .status(400)
-        .json({ message: "Herausforderung bereits abgeschlossen" });
-    }
-
-    if (endzeitpunkt && new Date(endzeitpunkt) < new Date()) {
-      await pool.query("ROLLBACK");
-      return res
-        .status(400)
-        .json({ message: "Herausforderung bereits abgelaufen" });
-    }
-
-    const newInstanceOfChallenge = await pool.query(
-      queries.create_instance_of_challenge,
-      [meter_absolviert || 0, status || "in_progress", sportkl_id, challenge_id]
-    );
-
-    await pool.query("COMMIT");
-
-    res.status(201).json(newInstanceOfChallenge.rows[0]);
+    res.status(201).json({
+      message: "Erfolgreich zur Challenge angemeldet.",
+      data: result.rows[0],
+    });
   } catch (error) {
-    await pool.query("ROLLBACK");
-    console.error("Fehler beim Erstellen der Herausforderung:", error);
+    console.error("Fehler beim Erstellen der Challenge-Instanz:", error);
     res.status(500).json({ message: "Interner Serverfehler" });
   }
-};
-const getAllArchiveChallenges = async (req, res) => {
-  const { sportl_id } = req.user;
-  try {
-    const archiveChallenges = await pool.query(
-      queries.getAllArchiveChallenges[sportl_id]
-    );
-    res.status(200).json(archiveChallenges.rows[0]);
-  } catch (error) {}
-  console.error("Fehler beim landen der Herausfordeungen:", error);
-  res.status(500).json({ message: "Interner Severfehler" });
 };
 
 // Füge eine Aktivität zu einer Herausforderungsinstance hinzu
@@ -291,8 +255,8 @@ module.exports = {
   getSingleChallenge,
   getAllTemplateChallenges,
   createChallenge,
-  create_instance_of_challenge,
-  getAllArchiveChallenges,
+  createInstanceOfChallenge,
+  getAllActiveChallenges,
   deleteChallenge,
   addActivityToChallengeInstance,
 };

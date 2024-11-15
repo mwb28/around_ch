@@ -11,6 +11,7 @@ const {
   userInfo,
   checkUserStatus,
   getAllSportClasses,
+  deleteSportClasses,
   getAllUnusedSportClasses,
   userStatistics,
 } = require("../controllers/userController");
@@ -20,6 +21,7 @@ router.get("/authcheck", authenticateUser, checkUserStatus);
 router.get("/current", authenticateUser, userInfo);
 router.get("/sportclasses", authenticateUser, getAllSportClasses);
 router.get("/unusedclasses", authenticateUser, getAllUnusedSportClasses);
+router.delete("/deleteclasses", authenticateUser, deleteSportClasses);
 router.route("/registersportclass").post(authenticateUser, registerSportclass);
 router.get("/statistics", authenticateUser, userStatistics);
 

@@ -63,8 +63,8 @@ const getAllSportClasses = async (req, res) => {
   const { sportl_id } = req.user;
   try {
     const sportClasses = await pool.query(queries.allSportClasses, [sportl_id]);
-    const stringFromSportClasses = sportClasses.rows.map((row) => row.name);
-    res.status(200).json(stringFromSportClasses);
+
+    res.status(200).json(sportClasses.rows);
   } catch (error) {
     console.error("Fehler beim Abrufen der Sportklassen:", error);
     res.status(500).json({ message: "Interner Serverfehler" });
@@ -73,7 +73,7 @@ const getAllSportClasses = async (req, res) => {
 const getAllUnusedSportClasses = async (req, res) => {
   const { sportl_id } = req.user;
   try {
-    const unusedSportClasses = await pool.query(queries.notUsedSportklasse, [
+    const unusedSportClasses = await pool.query(queries.notUsedSportclasses, [
       sportl_id,
     ]);
     res.status(200).json(unusedSportClasses.rows);
@@ -83,14 +83,24 @@ const getAllUnusedSportClasses = async (req, res) => {
   }
 };
 const deleteSportClasses = async (req, res) => {
-  const { sportkl_id } = req.body;
+  const { sportkl_ids } = req.body;
   const { sportl_id } = req.user;
+
+  // Wenn keine IDs bereitgestellt werden, beende die Funktion frühzeitig
+  if (!sportkl_ids || sportkl_ids.length === 0) {
+    return res.status(400).json({ message: "Keine IDs bereitgestellt" });
+  }
+
   try {
-    const deletedClasses = await pool.query(queries.deleteSportClasses, [
-      ids,
+    const result = await pool.query(queries.deleteSportclasses, [
+      sportkl_ids,
       sportl_id,
     ]);
-    res.status(200).json(deletedClasses.rows);
+
+    res.status(200).json({
+      message: "Sportklassen erfolgreich gelöscht",
+      count: result.rowCount,
+    });
   } catch (error) {
     console.error("Fehler beim Löschen der Sportklassen:", error);
     res.status(500).json({ message: "Interner Serverfehler" });
@@ -114,5 +124,6 @@ module.exports = {
   registerSportclass,
   getAllSportClasses,
   getAllUnusedSportClasses,
+  deleteSportClasses,
   userStatistics,
 };

@@ -12,13 +12,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         "http://localhost:5000/api/v1/users/unusedclasses"
       );
       const sportClasses = await response.json();
+      console.log(sportClasses);
 
       sportClassList.innerHTML = "";
       sportClasses.forEach((sportClass) => {
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
-        checkbox.value = sportClass.id;
-        checkbox.id = `sportClass-${sportClass.id}`;
+        checkbox.value = sportClass.sportkl_id;
+        checkbox.id = `sportClass-${sportClass.sportkl_id}`;
 
         const label = document.createElement("label");
         label.htmlFor = checkbox.id;
@@ -35,7 +36,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // Delete selected sport classes
+  // Loeschen der ausgewaehlten Sportklassen
   deleteSelectedClassesButton.addEventListener("click", async () => {
     const selectedClasses = Array.from(
       sportClassList.querySelectorAll('input[type="checkbox"]:checked')
@@ -48,13 +49,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/v1/users/statistics",
+        "http://localhost:5000/api/v1/users/deleteclasses",
         {
-          method: "POST",
+          method: "DELETE",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ ids: selectedClasses }),
+          body: JSON.stringify({ sportkl_ids: selectedClasses }),
         }
       );
 
