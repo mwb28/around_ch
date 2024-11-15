@@ -286,6 +286,9 @@ h2 {
   justify-content: space-between;
 }
 
+.dashboard-card-content h3 {
+  margin-top: 0.5em;
+}
 .dashboard-section {
   margin: 2em;
   padding: 1em;
@@ -295,10 +298,10 @@ h2 {
 }
 .map-image {
   width: 30%;
-  height: auto;
+
   max-height: 250px;
   border-radius: 8px;
-  margin: 1em;
+
   object-fit: cover;
 }
 
