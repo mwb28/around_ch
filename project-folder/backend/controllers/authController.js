@@ -56,6 +56,7 @@ const loginUser = async (req, res) => {
     res.cookie("authToken", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
+      sameSite: "Strict",
     });
     const username = `${userData.vorname} ${userData.nachname}`;
     res.status(200).json({ message: "Login erfolgreich", username: username });
@@ -117,6 +118,7 @@ const logoutUser = async (req, res) => {
   try {
     await pool.query(queries.insertinvalidatedToken, [token]);
     res.clearCookie("authToken");
+    res.set("Cache-Control", "no-store");
     res.status(200).json({ message: "Erfolgreich ausgeloggt" });
   } catch (error) {
     console.error("Fehler beim Ausloggen:", error.message);

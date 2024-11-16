@@ -48,6 +48,7 @@ WHERE c.abgeschlossen = false`;
 const getAllUserChallengesOfsameChallengeId = ` SELECT 
 kci.instanz_id, 
 kci.meter_absolviert, 
+kci.status,
 kci.sportkl_id, 
 sk.name AS sprtklasse_name,
 s.schulname,
@@ -62,7 +63,7 @@ FROM klassen_challenge_instanz kci
   JOIN challenge_vorlage cv 
     ON c.challengevl_id = cv.challengevl_id
   WHERE kci.challenge_id = $1 
-    AND kci.status = 'in_progress'`;
+  `;
 // Einzel Challenge anzeigen
 const challengeQuery = "SELECT * FROM challenge WHERE challenge_id = $1";
 // Einzel Challenge mit meter und geojson anzeigen
@@ -78,6 +79,22 @@ const getSingleChallenge = `  SELECT
     challenge_vorlage cv ON c.challengevl_id = cv.challengevl_id
   WHERE 
     c.challenge_id = $1`;
+const completedChallenge = `SELECT 
+kci.meter_absolviert, 
+cv.total_meter
+FROM klassen_challenge_instanz kci
+JOIN challenge c 
+  ON kci.challenge_id = c.challenge_id
+JOIN challenge_vorlage cv 
+  ON c.challengevl_id = cv.challengevl_id
+WHERE kci.instanz_id = $1
+`;
+
+const updateChallengeCompleted = `
+UPDATE klassen_challenge_instanz
+SET status = 'completed'
+WHERE instanz_id = $1
+`;
 const getAllTemplateChallenges = `SELECT 
     cv.challengevl_id,    
     cv.name_der_challenge,
@@ -163,6 +180,8 @@ module.exports = {
   allActiveChallenges,
   getAllUserChallengesOfsameChallengeId,
   getSingleChallenge,
+  completedChallenge,
+  updateChallengeCompleted,
   getAllTemplateChallenges,
   allUserChallenges,
   addActivity,

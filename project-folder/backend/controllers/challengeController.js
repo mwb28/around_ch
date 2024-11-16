@@ -67,6 +67,7 @@ const getAllUserChallengesOfsameChallengeId = async (req, res) => {
         meter_absolviert: row.meter_absolviert,
         sportklasse: row.sprtklasse_name,
         schule: row.schulname,
+        status: row.status,
       }));
       res.status(200).json(challenges);
     } catch (error) {
@@ -204,6 +205,8 @@ const addActivityToChallengeInstance = async (req, res) => {
 
   try {
     await pool.query("BEGIN");
+
+    // Aktivität hinzufügen
     await pool.query(queries.addActivity, [
       meter,
       uhrzeit,
@@ -214,20 +217,32 @@ const addActivityToChallengeInstance = async (req, res) => {
       anzahl_d || 0,
       instanz_id,
     ]);
+
+    // Challenge-Instanz aktualisieren
     await pool.query(queries.updateChallengeInstance, [meter, instanz_id]);
+
+    // Überprüfen, ob die Challenge abgeschlossen ist
+    const result = await pool.query(queries.completedChallenge, [instanz_id]);
+    const { meter_absolviert, total_meter } = result.rows[0];
+    if (meter_absolviert >= total_meter) {
+      await pool.query(queries.updateChallengeCompleted, [instanz_id]);
+    }
+
     await pool.query("COMMIT");
+
     res
       .status(201)
       .json({ message: "Aktivität hinzugefügt und Challenge aktualisiert" });
   } catch (error) {
     await pool.query("ROLLBACK");
-    console.error(
-      "Fehler beim Hinzufügen der Aktivität oder Challenge:",
-      error.message
-    );
+    console.error("Fehler beim Hinzufügen der Aktivität oder Challenge:", {
+      message: error.message,
+      stack: error.stack,
+    });
     res.status(500).json({ message: "Interner Serverfehler" });
   }
 };
+
 // Lösche eine Herausforderung
 const deleteChallenge = async (req, res) => {
   const { challenge_id } = req.params;
@@ -248,7 +263,20 @@ const deleteChallenge = async (req, res) => {
     res.status(500).json({ message: "Interner Serverfehler" });
   }
 };
-
+const getArchivedChallenges = async (req, res) => {
+  try {
+    const challenges = await pool.query(
+      `SELECT * FROM challenge WHERE abgeschlossen = true ORDER BY endzeitpunkt DESC`
+    );
+    res.status(200).json(challenges.rows);
+  } catch (error) {
+    console.error(
+      "Fehler beim Abrufen archivierter Challenges:",
+      error.message
+    );
+    res.status(500).json({ message: "Interner Serverfehler" });
+  }
+};
 module.exports = {
   getAllActiveChallenges,
   getAllActiveUserChallenges,
@@ -260,4 +288,5 @@ module.exports = {
   getAllActiveChallenges,
   deleteChallenge,
   addActivityToChallengeInstance,
+  getArchivedChallenges,
 };

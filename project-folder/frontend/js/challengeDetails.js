@@ -55,17 +55,25 @@ function renderChallengeDetail(participants) {
                             <th>Sportklasse</th>
                             <th>Schule</th>
                             <th>Zurückgelegte Meter</th>
+                            <th>Status</th>
                           </tr>
                         </thead>
                         <tbody>
                     `;
 
     participants.forEach((instance) => {
+      let statusAnzeige = "Unbekannt";
+      if (instance.status === "in_progress") {
+        statusAnzeige = "Im Gange";
+      } else if (instance.status === "completed") {
+        statusAnzeige = "Beendet";
+      }
       tableHTML += `
                         <tr>
                           <td>${instance.sportklasse || "Unbekannt"}</td>
                           <td>${instance.schule || "Unbekannt"}</td>
                           <td>${instance.meter_absolviert || "0"} m</td>
+                          <td>${statusAnzeige || "Unbekannt"}</td>
                         </tr>
                       `;
     });
