@@ -283,7 +283,7 @@ const getAllArchivedChallenges = async (req, res) => {
           abgeschlossen: row.abgeschlossen,
           challengevl_id: row.challengevl_id,
           name_der_challenge: row.name_der_challenge,
-          sportl_id: row.sportl_id,
+          total_meter: row.total_meter,
           image_url: generateImageUrl(row.name_der_challenge),
           teilnehmende_klassen: [],
         };

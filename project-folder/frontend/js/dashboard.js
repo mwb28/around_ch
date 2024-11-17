@@ -18,60 +18,42 @@ async function loadActiveChallenges() {
       document.getElementById("active-challenges");
 
     activeChallengesContainer.innerHTML = "";
+
     challenges.forEach((challenge) => {
-      // Hauptcontainer für jede Challenge-Karte erstellen
-      const challengeCard = document.createElement("div");
-      challengeCard.classList.add("dashboard-card");
+      // Akkordeon-Button erstellen
+      const accordionButton = document.createElement("button");
+      accordionButton.classList.add("accordion");
+      accordionButton.textContent =
+        "Sportklasse: " +
+        challenge.eigene_sportklasse +
+        " - " +
+        challenge.name_der_challenge +
+        " Nr: " +
+        challenge.challenge_id;
 
-      // Karte/Bild hinzufügen
-      const mapImage = document.createElement("img");
-      mapImage.src = challenge.image_path || "../assets/images/default.jpg";
-      mapImage.alt = "Karte der Challenge";
-      mapImage.classList.add("map-image");
-
-      // Inhalt der Karte hinzufügen
-      const cardContent = document.createElement("div");
-      cardContent.classList.add("dashboard-card-content");
-
-      const title = document.createElement("h3");
-      title.textContent = "Sportklasse: " + challenge.eigene_sportklasse;
+      // Panel-Inhalt erstellen
+      const panel = document.createElement("div");
+      panel.classList.add("panel");
 
       const description1 = document.createElement("p");
       description1.textContent =
-        challenge.name_der_challenge + " Nr: " + challenge.challenge_id;
-
-      const description2 = document.createElement("p");
-      description2.textContent =
         "Startzeitpunkt: " +
         new Date(challenge.startzeitpunkt).toLocaleString("de-CH");
 
-      const description3 = document.createElement("p");
-      description3.textContent =
+      const description2 = document.createElement("p");
+      description2.textContent =
         "Endzeitpunkt: " +
         new Date(challenge.endzeitpunkt).toLocaleString("de-CH");
 
-      // const description4 = document.createElement("p");
-      // description4.textContent = "Total Meter: " + challenge.total_meter;
-
-      const description5 = document.createElement("p");
-      description5.textContent =
+      const description3 = document.createElement("p");
+      description3.textContent =
         "Absolviert: " + challenge.meter_absolviert + " Meter";
 
-      const description6 = document.createElement("p");
-      description6.textContent =
+      const description4 = document.createElement("p");
+      description4.textContent =
         "Bis ins Ziel: " +
         (challenge.total_meter - challenge.meter_absolviert) +
         " Meter";
-
-      // const description6 = document.createElement("p");
-      // description6.textContent =
-      //   "Andere Sportklasse(n): " + challenge.andere_sportklassen;
-      // Einzel Challenge Link
-      // const link = document.createElement("a");
-      // link.href =
-      //   "./views/einzel-challenge.html?challengeId=" + challenge.challenge_id;
-      // link.textContent = "Einzel Challenge";
-      // link.classList.add("challenge-link");
 
       // Button-Container erstellen und Buttons hinzufügen
       const buttonContainer = document.createElement("div");
@@ -93,28 +75,26 @@ async function loadActiveChallenges() {
           `./aktivitaet-input.html?instanceId=${challenge.instanz_id}`
         );
 
-      // Buttons dem Button-Container hinzufügen
+      // Buttons zum Container hinzufügen
       buttonContainer.appendChild(showMapButton);
       buttonContainer.appendChild(addActivityButton);
 
-      // Alle Elemente zum cardContent hinzufügen
-      cardContent.appendChild(title);
-      cardContent.appendChild(description1);
-      cardContent.appendChild(description2);
-      cardContent.appendChild(description3);
-      // cardContent.appendChild(description4);
-      cardContent.appendChild(description5);
-      cardContent.appendChild(description6);
+      // Inhalte in das Panel einfügen
+      panel.appendChild(description1);
+      panel.appendChild(description2);
+      panel.appendChild(description3);
+      panel.appendChild(description4);
+      panel.appendChild(buttonContainer);
 
-      // cardContent.appendChild(link);
+      // Event-Listener für das Akkordeon hinzufügen
+      accordionButton.addEventListener("click", () => {
+        const isVisible = panel.style.display === "block";
+        panel.style.display = isVisible ? "none" : "block";
+      });
 
-      // Alle Teile zur Challenge-Karte hinzufügen
-      challengeCard.appendChild(mapImage);
-      challengeCard.appendChild(cardContent);
-      challengeCard.appendChild(buttonContainer);
-
-      // Challenge-Karte einmalig zum DOM hinzufügen
-      activeChallengesContainer.appendChild(challengeCard);
+      // Akkordeon-Elemente zur Seite hinzufügen
+      activeChallengesContainer.appendChild(accordionButton);
+      activeChallengesContainer.appendChild(panel);
     });
   } catch (error) {
     console.error("Fehler beim Laden der Challenges:", error);
