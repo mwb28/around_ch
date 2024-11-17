@@ -102,7 +102,8 @@ h2 {
 .delete-class,
 .dashboard-button,
 .back-button,
-.all-challenges-button {
+.all-challenges-button,
+.archived-challenges-button {
   background-color: #ffffff;
   color: #000000;
   border: 1px solid #000000;
@@ -163,7 +164,7 @@ h2 {
 
 .card {
   background-color: #ffffff;
-  border-radius: 10px;
+
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
@@ -191,7 +192,6 @@ h2 {
 
 .challenge-large-card {
   background-color: #ffffff;
-  border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-wrap: wrap;
@@ -218,21 +218,8 @@ h2 {
   margin: 0.5em 0;
 }
 
-.map-preview {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.map-preview img {
-  max-width: 100%;
-  border-radius: 10px;
-  height: auto;
-}
 .map-preview-large {
   width: 100%;
-  border-radius: 10px;
   height: auto;
 }
 .buttons {
@@ -277,7 +264,6 @@ h2 {
   display: flex;
   align-items: center;
   background-color: #f9f9f9;
-  border-radius: 8px;
   border: 1px solid #ddd;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 1em;
@@ -286,16 +272,6 @@ h2 {
   justify-content: space-between;
 }
 
-.dashboard-card-content h3 {
-  margin-top: 0.5em;
-}
-.dashboard-section {
-  margin: 2em;
-  padding: 1em;
-  background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
 .map-image {
   width: 30%;
 
@@ -342,11 +318,11 @@ h2 {
   padding-bottom: 1em;
 }
 
-.dashboard-section .card-content {
+.card-content {
   flex-basis: 20%;
   padding: 1em;
 }
-.dashboard-section .largecard {
+.largecard {
   display: flex;
   flex-direction: row;
   width: 100%;
@@ -558,7 +534,6 @@ h2 {
     box-sizing: border-box;
   }
 
-  .dashboard-card-content,
   .challenge-details {
     width: 100%;
     padding: 0.5em 0;
@@ -647,38 +622,48 @@ h2 {
     width: 100%;
   }
 }
-@media (max-width: 482px) {
-  .challenge-table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-  .login-card {
-    width: 100%;
+/* archive- style */
+.archive-challenges-section {
+  margin-top: 20px;
+  padding: 1em;
+}
 
-    padding: 10px;
-    box-sizing: border-box;
-  }
+.archive-challenge-card {
+  display: flex;
+  flex-direction: row;
+  border: 1px solid #ccc;
 
-  .login-card .input-group input {
-    font-size: 14px;
-    padding: 8px;
-    box-sizing: border-box;
-  }
+  margin-bottom: 20px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.archive-challenge-card-content {
+  display: flex;
+}
 
-  .login-links {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+.archive-challenge-image img {
+  max-width: 200px;
+  height: auto;
+}
 
-  .login-links a {
-    margin-top: 5px;
-  }
-  .buttons {
-    gap: 1em;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-  }
+.archive-challenge-details {
+  flex: 1;
+  margin-left: 20px;
+}
+
+.archive-class-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.archive-class-table th,
+.archive-class-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.archive-class-table th {
+  background-color: #f4f4f4;
 }

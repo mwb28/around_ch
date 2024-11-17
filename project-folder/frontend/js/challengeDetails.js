@@ -15,12 +15,12 @@ async function loadChallengeDetail() {
   try {
     // Teilnehmer und Fortschritt laden
     const participantsResponse = await fetch(
-      `http://localhost:5000/api/v1/challenges/public/pendingInstanzes/${challengeId}`
+      `http://localhost:5000/api/v1/challenges/pendingInstanzes/${challengeId}`
     );
 
     // Streckendaten und zusätzliche Details zur Challenge laden
     const challengeResponse = await fetch(
-      `http://localhost:5000/api/v1/challenges/public/single/${challengeId}`
+      `http://localhost:5000/api/v1/challenges/active/single/${challengeId}`
     );
     if (!challengeResponse.ok || !participantsResponse.ok) {
       throw new Error("Fehler beim Laden der Challenge-Daten.");

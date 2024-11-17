@@ -1,13 +1,9 @@
 const pool = require("../db/connect");
+const queries = require("../db/queries");
 
-const checkChallengeEndDate = async (req, res, next) => {
+const checkChallengeAndArchive = async (req, res, next) => {
   try {
-    const query = `
-      UPDATE challenge 
-      SET abgeschlossen = true 
-      WHERE endzeitpunkt <= NOW() AND abgeschlossen = false;
-    `;
-    const result = await pool.query(query);
+    const result = await pool.query(queries.checkAndArchiveChallenge);
 
     if (result.rowCount > 0) {
       console.log(`${result.rowCount} Challenges archiviert.`);
@@ -22,4 +18,4 @@ const checkChallengeEndDate = async (req, res, next) => {
   }
 };
 
-module.exports = checkChallengeEndDate;
+module.exports = checkChallengeAndArchive;

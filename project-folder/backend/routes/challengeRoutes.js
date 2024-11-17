@@ -3,6 +3,7 @@ const router = express.Router();
 const {
   validateChallengeParticipation,
 } = require("../middleware/challengeValidation");
+const checkChallengeAndArchive = require("../middleware/checkAndArchiveChallenge");
 const authenticateUser = require("../middleware/authenticatUser");
 const {
   getAllActiveChallenges,
@@ -13,21 +14,19 @@ const {
   createChallenge,
   addActivityToChallengeInstance,
   createInstanceOfChallenge,
-  //getAllArchiveChallenges,
+  getAllArchivedChallenges,
   deleteChallenge,
 } = require("../controllers/challengeController");
 
 // Öffentliche Routen
-router.get("/public", getAllActiveChallenges);
-router.get("/public/single/:challenge_id", getSingleChallenge);
+router.get("/active", checkChallengeAndArchive, getAllActiveChallenges);
+router.get("/active/single/:challenge_id", getSingleChallenge);
 router.get("/templates", getAllTemplateChallenges);
 router.get(
-  "/public/pendingInstanzes/:challenge_id",
+  "/pendingInstanzes/:challenge_id",
   getAllUserChallengesOfsameChallengeId
 );
 
-// Private Routen
-// to do...
 // Challenge erstellen
 router.get("/user", authenticateUser, getAllActiveUserChallenges);
 router.post("/create", authenticateUser, createChallenge);
@@ -38,7 +37,7 @@ router.post(
   createInstanceOfChallenge
 );
 
-//router.get("/archiveChallenges", authenticateUser, getAllArchiveChallenges);
+router.get("/archived", getAllArchivedChallenges);
 //delete route
 router.delete("/:challenge_id/delete", authenticateUser, deleteChallenge);
 // update route

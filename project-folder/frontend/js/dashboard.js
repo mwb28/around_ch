@@ -176,7 +176,7 @@ async function loadSportClasses() {
 async function loadSelectableChallenges() {
   try {
     const response = await fetch(
-      "http://localhost:5000/api/v1/challenges/public"
+      "http://localhost:5000/api/v1/challenges/active"
     );
     if (!response.ok)
       throw new Error("Fehler beim Laden der auswählbaren Challenges");

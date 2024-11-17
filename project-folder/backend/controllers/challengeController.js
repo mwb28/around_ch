@@ -13,20 +13,18 @@
 */
 const pool = require("../db/connect");
 const queries = require("../db/queries");
+const { generateImageUrl } = require("../utils/generateImagePath");
 
-// Zeige alle Herausforderungen an
 // Zeige alle Herausforderungen an
 const getAllActiveChallenges = async (req, res) => {
   try {
     const challenges = await pool.query(queries.allActiveChallenges);
 
     // Bildpfad für jede Challenge dynamisch hinzufügen
-    const challengesImage = challenges.rows.map((challenge) => {
-      const formattedName = challenge.name_der_challenge.toLowerCase();
-
-      const imagePath = `../assets/images/${formattedName}.jpg`;
-      return { ...challenge, image_path: imagePath };
-    });
+    const challengesImage = challenges.rows.map((challenge) => ({
+      ...challenge,
+      image_path: generateImageUrl(challenge.name_der_challenge),
+    }));
 
     res.status(200).json(challengesImage);
   } catch (error) {
@@ -34,6 +32,7 @@ const getAllActiveChallenges = async (req, res) => {
     res.status(500).json({ message: "Interner Serverfehler" });
   }
 };
+
 const getAllActiveUserChallenges = async (req, res) => {
   const { sportl_id } = req.user;
 
@@ -93,7 +92,7 @@ const getSingleChallenge = async (req, res) => {
     res.status(500).json({ message: "Interner Serverfehler" });
   }
 };
-
+// Hole alle Challenges- Vorlagen
 const getAllTemplateChallenges = async (req, res) => {
   try {
     const templateChallenges = await pool.query(
@@ -263,20 +262,54 @@ const deleteChallenge = async (req, res) => {
     res.status(500).json({ message: "Interner Serverfehler" });
   }
 };
-const getArchivedChallenges = async (req, res) => {
+// Hole alle Archivierten Challenges
+const getAllArchivedChallenges = async (req, res) => {
   try {
-    const challenges = await pool.query(
-      `SELECT * FROM challenge WHERE abgeschlossen = true ORDER BY endzeitpunkt DESC`
-    );
-    res.status(200).json(challenges.rows);
+    // Datenbankabfrage ausführen
+    const challenges = await pool.query(queries.allArchivedChallenges);
+
+    const rows = challenges.rows;
+
+    // Gruppierung und Verbindung der Daten
+    const formattedChallenges = rows.reduce((acc, row) => {
+      // Überprüfen, ob die Challenge bereits in der Liste ist
+      let challenge = acc.find((c) => c.challenge_id === row.challenge_id);
+      if (!challenge) {
+        // Challenge hinzufügen, wenn sie noch nicht existiert
+        challenge = {
+          challenge_id: row.challenge_id,
+          startzeitpunkt: row.startzeitpunkt,
+          endzeitpunkt: row.endzeitpunkt,
+          abgeschlossen: row.abgeschlossen,
+          challengevl_id: row.challengevl_id,
+          name_der_challenge: row.name_der_challenge,
+          sportl_id: row.sportl_id,
+          image_url: generateImageUrl(row.name_der_challenge),
+          teilnehmende_klassen: [],
+        };
+        acc.push(challenge);
+      }
+
+      // Klasse zur Challenge hinzufügen
+      challenge.teilnehmende_klassen.push({
+        klassen_instanz_id: row.instanz_id,
+        sportkl_id: row.sportkl_id,
+        klasse_name: row.klasse_name,
+        schulname: row.schulname,
+        meter_absolviert: row.meter_absolviert,
+        status: row.status,
+      });
+
+      return acc;
+    }, []);
+
+    res.status(200).json(formattedChallenges);
   } catch (error) {
-    console.error(
-      "Fehler beim Abrufen archivierter Challenges:",
-      error.message
-    );
+    console.error("Fehler beim Abrufen der archivierten Challenges:", error);
     res.status(500).json({ message: "Interner Serverfehler" });
   }
 };
+
 module.exports = {
   getAllActiveChallenges,
   getAllActiveUserChallenges,
@@ -285,8 +318,7 @@ module.exports = {
   getAllTemplateChallenges,
   createChallenge,
   createInstanceOfChallenge,
-  getAllActiveChallenges,
+  getAllArchivedChallenges,
   deleteChallenge,
   addActivityToChallengeInstance,
-  getArchivedChallenges,
 };

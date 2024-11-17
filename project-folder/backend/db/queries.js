@@ -1,25 +1,41 @@
 //  Authentifizierung der Sportlehrpersonen
-const registerUser =
-  "INSERT INTO sportlehrperson (name, vorname, email, password, school) VALUES ($1, $2, $3, $4, $5) RETURNING *";
-const getUserByEmail = "SELECT * FROM sportlehrperson WHERE email = $1";
-const updatePasswordAndRemoveFlag =
-  "UPDATE sportlehrperson SET password_gehashed = $1, needs_password_change = false WHERE email = $2";
-const insertinvalidatedToken =
-  "INSERT  INTO invalidated_tokens (token) VALUES ($1) RETURNING *";
-const getSchulIdFromSportlId =
-  "SELECT schul_id FROM sportlehrperson WHERE sportl_id = $1";
-const getInvalidatedToken = "SELECT * FROM invalidated_tokens WHERE token = $1";
+const registerUser = `INSERT INTO sportlehrperson 
+  (name, vorname, email, password, school) 
+  VALUES ($1, $2, $3, $4, $5) RETURNING *`;
+const getUserByEmail = `SELECT * 
+FROM sportlehrperson 
+WHERE email = $1`;
+const updatePasswordAndRemoveFlag = `UPDATE sportlehrperson 
+  SET password_gehashed = $1, 
+  needs_password_change = false 
+  WHERE email = $2`;
+const insertinvalidatedToken = `INSERT  INTO invalidated_tokens (token) 
+  VALUES ($1) RETURNING *`;
+const getSchulIdFromSportlId = `SELECT schul_id 
+  FROM sportlehrperson 
+  WHERE sportl_id = $1`;
+const getInvalidatedToken = `SELECT * 
+FROM invalidated_tokens 
+WHERE token = $1`;
 
 // Userinfos
-const getUserInfo = "SELECT * FROM sportlehrperson WHERE sportl_id = $1";
+const getUserInfo = `SELECT * 
+FROM sportlehrperson 
+WHERE sportl_id = $1`;
 // Registeren der Sporklassen
-const registerSportclass =
-  "INSERT INTO sportklasse (name,jahrgang, schul_id, sportl_id) VALUES ($1, $2, $3, $4) RETURNING *";
-const allSportClasses =
-  "SELECT * FROM sportklasse sk WHERE sk.sportl_id = $1 ORDER BY sk.name";
-const checkSportclass = `SELECT * FROM sportklasse WHERE name = $1 AND schul_id = $2 AND sportl_id = $3`;
-const getSportklasseId =
-  "SELECT sportkl_id FROM sportklasse WHERE sportkl_id = $1";
+const registerSportclass = `INSERT INTO sportklasse (name,jahrgang, schul_id, sportl_id) 
+  VALUES ($1, $2, $3, $4) RETURNING *`;
+const allSportClasses = `SELECT * 
+  FROM sportklasse sk 
+  WHERE sk.sportl_id = $1 ORDER BY sk.name`;
+const checkSportclass = `SELECT * 
+FROM sportklasse 
+WHERE name = $1 
+AND schul_id = $2 
+AND sportl_id = $3`;
+const getSportklasseId = `SELECT sportkl_id 
+  FROM sportklasse 
+  WHERE sportkl_id = $1`;
 const notUsedSportclasses = `SELECT * 
 FROM sportklasse sk
 WHERE sk.sportl_id = $1
@@ -43,7 +59,8 @@ const allActiveChallenges = `SELECT
 FROM challenge c
 JOIN challenge_vorlage cv 
   ON c.challengevl_id = cv.challengevl_id 
-WHERE c.abgeschlossen = false`;
+WHERE c.abgeschlossen = false
+AND c.endzeitpunkt > NOW()`;
 
 const getAllUserChallengesOfsameChallengeId = ` SELECT 
 kci.instanz_id, 
@@ -153,8 +170,49 @@ const addActivity = `INSERT INTO sportlicheleistung
 //   "INSERT INTO nimmtteilan (sportkl_id, challenge_id, gegner_sportkl_id) VALUES ($1, $2, $3)";
 const updateChallengeInstance =
   "UPDATE klassen_challenge_instanz SET meter_absolviert = meter_absolviert + $1 WHERE instanz_id = $2";
-const getAllArchiveChallenges = `SELECT * FROM challenge WHERE abgeschossen = true AND sportl_id = $1`;
-const deleteChallenge = "DELETE FROM challenge WHERE challenge_id = $1";
+const checkAndArchiveChallenge = `
+  UPDATE challenge c
+      SET abgeschlossen = true
+      WHERE c.abgeschlossen = false
+        AND (
+          NOT EXISTS (
+            SELECT 1
+            FROM klassen_challenge_instanz kci
+            WHERE kci.challenge_id = c.challenge_id
+              AND kci.status != 'completed'
+          )
+        OR
+          c.endzeitpunkt <= NOW()
+        )
+`;
+const allArchivedChallenges = ` SELECT 
+c.challenge_id,
+c.startzeitpunkt,
+c.endzeitpunkt,
+c.abgeschlossen,
+c.challengevl_id,
+cv.name_der_challenge,
+c.sportl_id,
+kci.instanz_id,
+kci.meter_absolviert,
+kci.status,
+kci.sportkl_id,
+sk.name AS klasse_name,
+s.schulname
+FROM 
+challenge c
+JOIN 
+  klassen_challenge_instanz kci ON c.challenge_id = kci.challenge_id
+JOIN 
+  challenge_vorlage cv ON c.challengevl_id = cv.challengevl_id
+LEFT JOIN 
+  sportklasse sk ON kci.sportkl_id = sk.sportkl_id
+JOIN schule s 
+    ON sk.schul_id = s.schul_id 
+WHERE 
+  c.abgeschlossen = true;
+`;
+const deleteChallenge = `DELETE FROM challenge WHERE challenge_id = $1`;
 const getUserStatistics = `SELECT
     SUM(sl.meter) AS totalmeter,
     SUM(sl.dauer) AS totaldauer
@@ -188,9 +246,10 @@ module.exports = {
   createChallenge,
   checkClassParticipation,
   updateChallengeInstance,
-  getAllArchiveChallenges,
+  allArchivedChallenges,
   deleteChallenge,
   createInstanceOfChallenge,
   challengeQuery,
   getUserStatistics,
+  checkAndArchiveChallenge,
 };
