@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loadSelectableChallenges();
   loadCreateChallenge();
 });
-
+//  Alle aktiven Challenges laden, die zum einer Sportl_id gehören
 async function loadActiveChallenges() {
   try {
     const response = await fetch(
@@ -31,7 +31,6 @@ async function loadActiveChallenges() {
         " Nr: " +
         challenge.challenge_id;
 
-      // Panel-Inhalt erstellen
       const panel = document.createElement("div");
       panel.classList.add("panel");
 
@@ -55,7 +54,6 @@ async function loadActiveChallenges() {
         (challenge.total_meter - challenge.meter_absolviert) +
         " Meter";
 
-      // Button-Container erstellen und Buttons hinzufügen
       const buttonContainer = document.createElement("div");
       buttonContainer.classList.add("button-container");
 
@@ -75,18 +73,16 @@ async function loadActiveChallenges() {
           `./aktivitaet-input.html?instanceId=${challenge.instanz_id}`
         );
 
-      // Buttons zum Container hinzufügen
       buttonContainer.appendChild(showMapButton);
       buttonContainer.appendChild(addActivityButton);
 
-      // Inhalte in das Panel einfügen
       panel.appendChild(description1);
       panel.appendChild(description2);
       panel.appendChild(description3);
       panel.appendChild(description4);
       panel.appendChild(buttonContainer);
 
-      // Event-Listener für das Akkordeon hinzufügen
+      // Event-Listener für das Akkordeon
       accordionButton.addEventListener("click", () => {
         const isVisible = panel.style.display === "block";
         panel.style.display = isVisible ? "none" : "block";
@@ -100,7 +96,7 @@ async function loadActiveChallenges() {
     console.error("Fehler beim Laden der Challenges:", error);
   }
 }
-
+// Statistik der sporlt_id laden
 async function loadStatistics() {
   try {
     const response = await fetch(
@@ -152,7 +148,7 @@ async function loadSportClasses() {
     console.error("Fehler beim Laden der Sportklassen:", error);
   }
 }
-
+// Auswaehlbare Challenges laden
 async function loadSelectableChallenges() {
   try {
     const response = await fetch(
@@ -178,10 +174,9 @@ async function loadSelectableChallenges() {
       const challengeCard = document.createElement("div");
       challengeCard.classList.add("challenge-card-selectable");
 
-      // Bild hinzufügen
       const challengeImage = document.createElement("img");
       challengeImage.src =
-        challenge.image_path || "../assets/images/default.jpg"; // Fallback-Bild
+        challenge.image_path || "../assets/images/default.jpg";
       challengeImage.alt = challenge.name;
       challengeImage.classList.add("challenge-image-selectable");
       challengeCard.appendChild(challengeImage);
@@ -240,6 +235,9 @@ async function loadSelectableChallenges() {
     console.error("Fehler beim Laden der auswählbaren Challenges:", error);
   }
 }
+
+// Hilfsfunktion um existierenden Challenges beizutreten
+
 async function joinChallenge(challengeId, classId) {
   if (!classId || !challengeId) {
     alert("Bitte wähle eine gültige Klasse und Challenge aus.");
@@ -277,6 +275,7 @@ async function joinChallenge(challengeId, classId) {
     alert("Ein Fehler ist aufgetreten. Bitte versuche es später erneut.");
   }
 }
+// Neue challenges erstellen
 
 async function loadCreateChallenge() {
   try {
@@ -300,11 +299,9 @@ async function loadCreateChallenge() {
       document.getElementById("create-challenges");
     createChallengeContainer.innerHTML = "";
 
-    // Formular für die Challenge-Erstellung erstellen
     const form = document.createElement("form");
     form.classList.add("create-challenge-form");
 
-    // Dropdown-Menü für Challenge-Vorlagen
     const templateLabel = document.createElement("label");
     templateLabel.textContent = "Challenge-Vorlage auswählen:";
     const templateDropdown = document.createElement("select");
@@ -318,7 +315,6 @@ async function loadCreateChallenge() {
     form.appendChild(templateLabel);
     form.appendChild(templateDropdown);
 
-    // Startdatum und -zeit
     const startLabel = document.createElement("label");
     startLabel.textContent = "Startdatum und -zeit:";
     const startDateInput = document.createElement("input");
@@ -331,7 +327,6 @@ async function loadCreateChallenge() {
     form.appendChild(startDateInput);
     form.appendChild(startTimeInput);
 
-    // Enddatum und -zeit
     const endLabel = document.createElement("label");
     endLabel.textContent = "Enddatum und -zeit:";
     const endDateInput = document.createElement("input");
@@ -344,7 +339,6 @@ async function loadCreateChallenge() {
     form.appendChild(endDateInput);
     form.appendChild(endTimeInput);
 
-    // Dropdown-Menü für Klassen
     const classLabel = document.createElement("label");
     classLabel.textContent = "Sportklasse auswählen:";
     const classDropdown = document.createElement("select");
@@ -374,7 +368,6 @@ async function loadCreateChallenge() {
       );
     form.appendChild(createButton);
 
-    // Formular zur Container-DIV hinzufügen
     createChallengeContainer.appendChild(form);
   } catch (error) {
     console.error("Fehler beim Laden der Challenge-Erstellungsseite:", error);

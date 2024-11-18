@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     "deleteSelectedClasses"
   );
 
-  // Fetch sport classes from the backend
+  // Laedt alle Sporklassen, die nicht verwendet werden
   async function loadSportClasses() {
     sportClassList.innerHTML = "<p>Sportklassen werden geladen...</p>";
     try {
@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (response.ok) {
         alert("Sportklasse(n) erfolgreich gelöscht.");
-        loadSportClasses(); // Aktualisiere die Liste nach dem Löschen
+        loadSportClasses(); // Aktualisiert die Liste nach dem Löschen
       } else {
         alert("Fehler beim Löschen der Sportklasse(n).");
       }
@@ -70,6 +70,5 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
-  // Lade die Sportklassen bei Initialisierung
   await loadSportClasses();
 });

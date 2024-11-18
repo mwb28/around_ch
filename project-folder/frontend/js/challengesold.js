@@ -67,11 +67,11 @@ async function loadChallenges(showAll = false) {
         [47.808, 10.492], // Nordöstlicher Punkt der Schweiz
       ];
 
-      // Initialize Leaflet map
+      // Initialisiere Leaflet map
       const map = L.map(mapContainer).setView(
-        [47.1, 7.2],
+        [47.1, 7.2], // Hoehen und Breitengrad Fokus
 
-        6 // Zoom level
+        6 // Zoom level für map
       );
       map.setMaxBounds(switzerlandBounds);
       map.fitBounds(switzerlandBounds);
@@ -89,7 +89,7 @@ async function loadChallenges(showAll = false) {
             return {
               color: "blue",
               weight: 2,
-              opacity: 0.7, // Transparenz
+              opacity: 0.7,
             };
           },
         }).addTo(map);
