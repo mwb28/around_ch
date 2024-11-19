@@ -1,7 +1,7 @@
 async function authCheck() {
   try {
     const response = await fetch(
-      "http://localhost:5000/api/v1/users/authcheck",
+      `${window.backendUrl}/api/v1/users/authcheck`,
       {
         method: "GET",
         credentials: "include",

@@ -52,7 +52,7 @@ async function submitActivity() {
 
   try {
     const response = await fetch(
-      `http://localhost:5000/api/v1/challenges/addActivity`,
+      `${window.backendUrl}/api/v1/challenges/addActivity`,
       {
         method: "POST",
         headers: {

@@ -21,7 +21,7 @@ async function submitRegistration() {
 
   try {
     const response = await fetch(
-      `http://localhost:5000/api/v1/users/registersportclass`,
+      `${window.backendUrl}/api/v1/users/registersportclass`,
       {
         method: "POST",
         headers: {

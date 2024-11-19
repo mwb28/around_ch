@@ -10,7 +10,7 @@ async function loadArchivedChallenges() {
   try {
     // Archivierte Challenges abrufen
     const response = await fetch(
-      "http://localhost:5000/api/v1/challenges/archived"
+      `${window.backendUrl}/api/v1/challenges/archived`
     );
     if (!response.ok) {
       throw new Error("Fehler beim Abrufen der archivierten Challenges.");

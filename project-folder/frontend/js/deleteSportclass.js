@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     sportClassList.innerHTML = "<p>Sportklassen werden geladen...</p>";
     try {
       const response = await fetch(
-        "http://localhost:5000/api/v1/users/unusedclasses"
+        `${window.backendUrl}/api/v1/users/unusedclasses`
       );
       const sportClasses = await response.json();
       console.log(sportClasses);
@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/v1/users/deleteclasses",
+        `${window.backendUrl}/api/v1/users/deleteclasses`,
         {
           method: "DELETE",
           headers: {

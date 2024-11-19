@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function loadChallenges(showAll = false) {
   try {
     const response = await fetch(
-      "http://localhost:5000/api/v1/challenges/public"
+      `${window.backendUrl}/api/v1/challenges/public`
     );
     if (!response.ok) {
       throw new Error("Fehler beim Laden der Challenges");

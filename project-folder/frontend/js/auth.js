@@ -10,16 +10,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const password = document.getElementById("password").value;
 
       try {
-        const response = await fetch(
-          "http://localhost:5000/api/v1/auth/login",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ email, password }),
-          }
-        );
+        const response = await fetch(`${window.backendUrl}/api/v1/auth/login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        });
 
         const data = await response.json();
 
@@ -81,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       try {
         const response = await fetch(
-          "http://localhost:5000/api/v1/auth/changePassword",
+          `${window.backendUrl}/api/v1/auth/changePassword`,
           {
             method: "POST",
             headers: {
@@ -139,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
   async function logout() {
     try {
       // Sende eine Anfrage an den Server, um das Token ungültig zu machen und den Cookie zu löschen
-      const response = await fetch("http://localhost:5000/api/v1/auth/logout", {
+      const response = await fetch(`${window.backendUrl}/api/v1/auth/logout`, {
         method: "POST",
         credentials: "include", // Senden der Cookies mit der Anfrage
       });

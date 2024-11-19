@@ -8,9 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
 //  Alle aktiven Challenges laden, die zum einer Sportl_id gehören
 async function loadActiveChallenges() {
   try {
-    const response = await fetch(
-      "http://localhost:5000/api/v1/challenges/user"
-    );
+    const response = await fetch(`${window.backendUrl}/api/v1/challenges/user`);
     if (!response.ok) throw new Error("Fehler beim Laden der Challenges");
 
     const challenges = await response.json();
@@ -100,7 +98,7 @@ async function loadActiveChallenges() {
 async function loadStatistics() {
   try {
     const response = await fetch(
-      "http://localhost:5000/api/v1/users/statistics"
+      `${window.backendUrl}/api/v1/users/statistics`
     );
     if (!response.ok) throw new Error("Fehler beim Laden der Statistik");
     const statsArray = await response.json();
@@ -124,7 +122,7 @@ async function loadStatistics() {
 async function loadSportClasses() {
   try {
     const response = await fetch(
-      "http://localhost:5000/api/v1/users/sportclasses"
+      `${window.backendUrl}/api/v1/users/sportclasses`
     );
     if (!response.ok) throw new Error("Fehler beim Laden der Sportklassen");
 
@@ -152,7 +150,7 @@ async function loadSportClasses() {
 async function loadSelectableChallenges() {
   try {
     const response = await fetch(
-      "http://localhost:5000/api/v1/challenges/active"
+      `${window.backendUrl}/api/v1/challenges/active`
     );
     if (!response.ok)
       throw new Error("Fehler beim Laden der auswählbaren Challenges");
@@ -160,7 +158,7 @@ async function loadSelectableChallenges() {
     const challenges = await response.json();
 
     const classesResponse = await fetch(
-      "http://localhost:5000/api/v1/users/sportclasses"
+      `${window.backendUrl}/api/v1/users/sportclasses`
     );
     if (!classesResponse.ok)
       throw new Error("Fehler beim Laden der Sportklassen");
@@ -246,7 +244,7 @@ async function joinChallenge(challengeId, classId) {
 
   try {
     const response = await fetch(
-      "http://localhost:5000/api/v1/challenges/createInstance",
+      `${window.backendUrl}/api/v1/challenges/createInstance`,
       {
         method: "POST",
         headers: {
@@ -281,7 +279,7 @@ async function loadCreateChallenge() {
   try {
     // Vorlagen für Challenges aus der Datenbank abrufen
     const templatesResponse = await fetch(
-      "http://localhost:5000/api/v1/challenges/templates"
+      `${window.backendUrl}/api/v1/challenges/templates`
     );
     if (!templatesResponse.ok)
       throw new Error("Fehler beim Laden der Challenge-Vorlagen");
@@ -289,7 +287,7 @@ async function loadCreateChallenge() {
 
     // Sportklassen aus der Datenbank abrufen
     const classesResponse = await fetch(
-      "http://localhost:5000/api/v1/users/sportclasses"
+      `${window.backendUrl}/api/v1/users/sportclasses`
     );
     if (!classesResponse.ok)
       throw new Error("Fehler beim Laden der Sportklassen");
@@ -395,7 +393,7 @@ async function createChallenge(
 
   try {
     const response = await fetch(
-      "http://localhost:5000/api/v1/challenges/create",
+      `${window.backendUrl}/api/v1/challenges/create`,
       {
         method: "POST",
         headers: {

@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function loadChallenges(showAll = false) {
   try {
     const response = await fetch(
-      "http://localhost:5000/api/v1/challenges/active"
+      `${window.backendUrl}/api/v1/challenges/active`
     );
     if (!response.ok) {
       throw new Error("Fehler beim Laden der Challenges");
@@ -87,7 +87,7 @@ async function loadChallenges(showAll = false) {
 
       // Teilnehmerdaten laden und anzeigen
       const participantsResponse = await fetch(
-        `http://localhost:5000/api/v1/challenges/pendingInstanzes/${challenge.challenge_id}`
+        `${window.backendUrl}/api/v1/challenges/pendingInstanzes/${challenge.challenge_id}`
       );
       const participants = await participantsResponse.json();
       const colors = ["red", "green", "black", "orange", "purple"];
