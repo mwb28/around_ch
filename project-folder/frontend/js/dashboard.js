@@ -66,10 +66,10 @@ async function loadActiveChallenges() {
       const addActivityButton = document.createElement("button");
       addActivityButton.textContent = "Aktivität hinzufügen";
       addActivityButton.classList.add("add-activity");
-      addActivityButton.onclick = () =>
-        window.open(
-          `./aktivitaet-input.html?instanceId=${challenge.instanz_id}`
-        );
+      addActivityButton.onclick = () => {
+        const url = `./aktivitaet-input.html?instanceId=${challenge.instanz_id}&startzeit=${challenge.startzeitpunkt}&endzeit=${challenge.endzeitpunkt}`;
+        window.open(url);
+      };
 
       buttonContainer.appendChild(showMapButton);
       buttonContainer.appendChild(addActivityButton);
